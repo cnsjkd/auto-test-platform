@@ -4,11 +4,13 @@
 
 - **允许恢复正式交付，并允许将 P0 冒烟套件纳入 v0.1+ 交付**。
 - GitHub 已封版提交并推送：`237c634 Finalize v0.1 delivery baseline`。
+- 最新体验增强提交已推送：`e0ab107 Add visible device control console`。
 - 版本标签已推送：`v0.1.0-a2-p0-smoke`。
 - 验证对象：思必驰会议办公本 A2 Android 真机自动化测试平台 v0.1+。
 - 真实设备：`A2PBVT1CFADBC000784`，`AINOTE-A2`，Android 13，1200x1920，ADB online。
 - 最终真实 A2 质量报告：`qa_final_real_a2_regression/QUALITY_REPORT.md`。
 - P0 冒烟套件质量报告：`qa_p0_smoke_suite/QUALITY_REPORT.md`。
+- 可见真机操作台验证证据：`visible_console_verification/visible_console_verification.json` 与 `backend/artifacts/2026-07-01/manual/screenshot/visible_console_after_demo.png`。
 
 ## 已完成
 
