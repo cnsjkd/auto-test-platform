@@ -589,3 +589,148 @@ def test_pixel_audit_is_serialized_into_run_detail_and_html_report(client):
         assert "坐标依赖当前 A2 分辨率与方向" in html_text
         assert "pixelAudit" in json_text
         assert "补充 resource-id 或 content-desc" in json_text
+
+
+def test_automation_flow_run_executes_five_steps_and_returns_evidence(client):
+    from app.adapters.adb import PNG_MAGIC
+    from app.api import routes
+    from app.models import DeviceCommand
+    from app.models.entities import now_utc
+    from app.services.artifacts import ArtifactManager
+
+    class FakeFlowCommandService:
+        def __init__(self):
+            self.artifacts = ArtifactManager()
+            self.executed_actions = []
+
+        def execute(self, db, *, device_id, request, source="api", **kwargs):
+            self.executed_actions.append((request.action.value, request.params, source))
+            command = DeviceCommand(
+                device_id=device_id,
+                command_type=request.action.value,
+                source=source,
+                params=request.params,
+                selector=request.selector or {},
+                status="success",
+                locator_mode="adb",
+                pixel_fallback_used=False,
+                response={"ok": True},
+                exit_code=0,
+                started_at=now_utc(),
+                ended_at=now_utc(),
+            )
+            db.add(command)
+            db.flush()
+            return command, []
+
+        def capture_screenshot(self, db, *, device_id, name=None, **kwargs):
+            return self.artifacts.save_bytes(db, content=PNG_MAGIC + b"FLOW_SCREENSHOT", artifact_type="screenshot", device_id=device_id, name=name)
+
+        def capture_hierarchy(self, db, *, device_id, name=None, **kwargs):
+            return self.artifacts.save_text(db, text="<?xml version='1.0'?><hierarchy />", artifact_type="hierarchy", device_id=device_id, name=name)
+
+        def capture_logcat(self, db, *, device_id, duration_sec=3, buffers=None, name=None, **kwargs):
+            return self.artifacts.save_text(db, text="flow logcat", artifact_type="logcat", device_id=device_id, name=name)
+
+    original_service = routes.command_service
+    fake_service = FakeFlowCommandService()
+    routes.command_service = fake_service
+    try:
+        response = client.post(
+            "/api/automation-flows/run",
+            json={
+                "deviceId": 42,
+                "name": "adb panel flow",
+                "steps": [
+                    {"name": "home", "action": "keyevent", "params": {"key": "HOME"}},
+                    {"name": "notifications", "action": "open_notification"},
+                    {"name": "quick settings", "action": "open_quick_settings"},
+                    {"name": "back one", "action": "keyevent", "params": {"key": "BACK"}},
+                    {"name": "back two", "action": "keyevent", "params": {"key": "BACK"}},
+                ],
+                "captureAfterEachStep": True,
+                "collectFinalEvidence": True,
+                "config": {"trigger": "contract-test"},
+            },
+        )
+    finally:
+        routes.command_service = original_service
+
+    assert response.status_code == 200
+    payload = response.json()
+    assert payload["code"] == 0
+    data = payload["data"]
+    assert {"run", "steps", "artifacts"}.issubset(data)
+    assert data["run"]["status"] == "success"
+    assert data["run"]["deviceId"] == 42
+    assert data["run"]["totalCount"] == 5
+    assert data["run"]["passedCount"] == 5
+    assert data["run"]["failedCount"] == 0
+    assert data["run"]["pixelFallbackCount"] == 0
+    assert data["run"]["startedAt"]
+    assert data["run"]["endedAt"]
+    assert data["run"]["message"] == "flow completed"
+    assert [result["action"] for result in data["steps"]] == ["keyevent", "open_notification", "open_quick_settings", "keyevent", "keyevent"]
+    assert [result["name"] for result in data["steps"]] == ["home", "notifications", "quick settings", "back one", "back two"]
+    assert all(result["status"] == "success" for result in data["steps"])
+    assert all(result["locatorMode"] == "adb" for result in data["steps"])
+    assert all(result["pixelFallbackUsed"] is False for result in data["steps"])
+    assert all(result["command"] for result in data["steps"])
+    assert all(result["artifacts"] for result in data["steps"])
+    artifact_types = [artifact["type"] for artifact in data["artifacts"]]
+    assert artifact_types.count("screenshot") == 5
+    assert "hierarchy" in artifact_types
+    assert "logcat" in artifact_types
+    assert "report_json" in artifact_types
+    assert "summary" in data
+    assert "stepResults" in data
+    assert fake_service.executed_actions == [
+        ("keyevent", {"key": "HOME"}, "flow"),
+        ("open_notification", {}, "flow"),
+        ("open_quick_settings", {}, "flow"),
+        ("keyevent", {"key": "BACK"}, "flow"),
+        ("keyevent", {"key": "BACK"}, "flow"),
+    ]
+
+
+def test_automation_flow_run_rejects_pixel_action_without_audit_fields(client):
+    response = client.post(
+        "/api/automation-flows/run",
+        json={
+            "deviceId": 42,
+            "name": "bad pixel flow",
+            "steps": [
+                {
+                    "action": "pixel_tap",
+                    "pixelFallback": True,
+                    "x": 10,
+                    "y": 20,
+                    "screenWidth": 100,
+                    "screenHeight": 200,
+                    "orientation": "portrait",
+                }
+            ],
+        },
+    )
+
+    assert response.status_code == 400
+    payload = response.json()
+    assert payload["code"] == 52003
+    assert "fallbackReason" in payload["message"]
+
+
+def test_automation_flow_run_rejects_shell_action(client):
+    response = client.post(
+        "/api/automation-flows/run",
+        json={
+            "deviceId": 42,
+            "name": "bad shell flow",
+            "steps": [{"name": "shell", "action": "shell", "params": {"command": "id"}}],
+        },
+    )
+
+    assert response.status_code == 400
+    payload = response.json()
+    assert payload["code"] == 40001
+    assert "shell action" in payload["message"]
+    assert payload["data"]["details"]["blockedAction"] == "shell"

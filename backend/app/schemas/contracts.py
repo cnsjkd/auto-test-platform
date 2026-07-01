@@ -85,6 +85,33 @@ class DeviceCommandRequest(StrictBaseModel):
         return self
 
 
+class FlowStepRequest(DeviceCommandRequest):
+    name: str | None = Field(default=None, min_length=1, max_length=128)
+
+
+class FlowRunRequest(StrictBaseModel):
+    deviceId: int
+    name: str = Field(min_length=1, max_length=255)
+    steps: list[FlowStepRequest] = Field(min_length=1, max_length=200)
+    captureAfterEachStep: bool = True
+    collectFinalEvidence: bool = True
+    config: dict[str, Any] = Field(default_factory=dict)
+    flowId: str | None = Field(default=None, min_length=1, max_length=128)
+    captureArtifacts: bool | None = None
+
+    @model_validator(mode="after")
+    def reject_shell_steps(self) -> "FlowRunRequest":
+        blocked_indexes = [index for index, step in enumerate(self.steps, start=1) if step.action == Action.shell]
+        if blocked_indexes:
+            raise AppException(
+                code=PARAM_ERROR,
+                message="automation flow does not allow shell action",
+                status_code=400,
+                details={"blockedAction": Action.shell.value, "stepIndexes": blocked_indexes},
+            )
+        return self
+
+
 class TestCaseCreateRequest(StrictBaseModel):
     name: str = Field(min_length=1, max_length=255)
     type: str = Field(default="manual", min_length=1, max_length=64)

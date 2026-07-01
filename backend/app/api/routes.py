@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import uuid
 from pathlib import Path
 
 from fastapi import APIRouter, Depends, Query, Request, WebSocket, WebSocketDisconnect
@@ -11,11 +12,13 @@ from sqlalchemy.orm import Session
 from app.core.config import settings
 from app.core.errors import AppException, NOT_FOUND
 from app.core.response import json_envelope
+from app.models.entities import now_utc
 from app.db.session import get_db
 from app.models import Artifact
 from app.schemas.contracts import (
     DeviceCommandRequest,
     DeviceScanRequest,
+    FlowRunRequest,
     LogcatSnapshotRequest,
     NameRequest,
     RunCancelRequest,
@@ -93,6 +96,136 @@ def execute_command(request: Request, device_id: int, payload: DeviceCommandRequ
             "artifacts": [artifact_to_dict(artifact) for artifact in artifacts],
         },
     )
+
+
+def _run_flow_payload(payload: FlowRunRequest, db: Session) -> dict:
+    flow_id = payload.flowId or f"flow_{uuid.uuid4().hex}"
+    started_at = now_utc()
+    steps = []
+    artifacts = []
+    status = "success"
+    failure_message = None
+
+    for index, step in enumerate(payload.steps, start=1):
+        step_artifacts = []
+        command_dict = None
+        step_result = {
+            "index": index,
+            "name": step.name,
+            "action": step.action.value,
+            "status": "running",
+            "message": None,
+            "command": None,
+            "locatorMode": None,
+            "pixelFallbackUsed": False,
+            "artifacts": [],
+        }
+        try:
+            command, command_artifacts = command_service.execute(db, device_id=payload.deviceId, request=step, source="flow")
+            command_dict = command_to_dict(command)
+            step_artifacts.extend(command_artifacts)
+            step_result["status"] = command_dict["status"]
+            step_result["message"] = command_dict.get("errorMessage") or "ok"
+            step_result["command"] = command_dict
+            step_result["locatorMode"] = command_dict.get("locatorMode")
+            step_result["pixelFallbackUsed"] = command_dict.get("pixelFallbackUsed", False)
+            if payload.captureAfterEachStep:
+                try:
+                    screenshot = command_service.capture_screenshot(db, device_id=payload.deviceId, name=f"{flow_id}_step_{index}_after")
+                    step_artifacts.append(screenshot)
+                except AppException as exc:
+                    step_result["screenshotWarning"] = exc.message
+        except AppException as exc:
+            status = "failed"
+            failure_message = exc.message
+            step_result["status"] = "failed"
+            step_result["message"] = exc.message
+            step_result["error"] = {"code": exc.code, "message": exc.message, "details": exc.details}
+            if payload.captureAfterEachStep:
+                try:
+                    screenshot = command_service.capture_screenshot(db, device_id=payload.deviceId, name=f"{flow_id}_step_{index}_failure")
+                    step_artifacts.append(screenshot)
+                except AppException as screenshot_exc:
+                    step_result["screenshotWarning"] = screenshot_exc.message
+        step_result["artifacts"] = [artifact_to_dict(artifact) for artifact in step_artifacts]
+        artifacts.extend(step_artifacts)
+        steps.append(step_result)
+        if step_result["status"] != "success":
+            break
+
+    final_artifacts = []
+    if payload.collectFinalEvidence:
+        for collector in (
+            lambda: command_service.capture_hierarchy(db, device_id=payload.deviceId, name=f"{flow_id}_final_hierarchy"),
+            lambda: command_service.capture_logcat(db, device_id=payload.deviceId, duration_sec=3, name=f"{flow_id}_final_logcat"),
+        ):
+            try:
+                final_artifacts.append(collector())
+            except AppException:
+                pass
+
+    artifacts.extend(final_artifacts)
+    ended_at = now_utc()
+    passed_count = sum(1 for result in steps if result["status"] == "success")
+    failed_count = sum(1 for result in steps if result["status"] != "success")
+    pixel_fallback_count = sum(1 for result in steps if result["pixelFallbackUsed"])
+    run = {
+        "id": flow_id,
+        "status": status,
+        "deviceId": payload.deviceId,
+        "totalCount": len(payload.steps),
+        "passedCount": passed_count,
+        "failedCount": failed_count,
+        "pixelFallbackCount": pixel_fallback_count,
+        "startedAt": started_at.isoformat(),
+        "endedAt": ended_at.isoformat(),
+        "message": failure_message or "flow completed",
+    }
+    report_payload = {
+        "run": run,
+        "steps": steps,
+        "artifacts": [artifact_to_dict(artifact) for artifact in artifacts],
+        "config": payload.config,
+    }
+    report = command_service.artifacts.save_json(
+        db,
+        payload=report_payload,
+        device_id=payload.deviceId,
+        name=f"{flow_id}_summary",
+        meta={"flowId": flow_id, "flowName": payload.name},
+    )
+    artifacts.append(report)
+    artifact_dicts = [artifact_to_dict(artifact) for artifact in artifacts]
+    summary = {
+        "flowId": flow_id,
+        "name": payload.name,
+        "deviceId": payload.deviceId,
+        "status": status,
+        "totalSteps": len(payload.steps),
+        "completedSteps": passed_count,
+        "failedSteps": failed_count,
+        "startedAt": run["startedAt"],
+        "endedAt": run["endedAt"],
+        "message": run["message"],
+    }
+    db.commit()
+    return {
+        "run": run,
+        "steps": steps,
+        "artifacts": artifact_dicts,
+        "summary": summary,
+        "stepResults": steps,
+    }
+
+
+@router.post("/automation-flows/run")
+def run_automation_flow(request: Request, payload: FlowRunRequest, db: Session = Depends(get_db)):
+    return json_envelope(request, _run_flow_payload(payload, db))
+
+
+@router.post("/flows/run")
+def run_flow(request: Request, payload: FlowRunRequest, db: Session = Depends(get_db)):
+    return json_envelope(request, _run_flow_payload(payload, db))
 
 
 @router.post("/devices/{device_id}/screenshot")
