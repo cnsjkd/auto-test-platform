@@ -15,7 +15,7 @@ const navItems = [
   { key: '/test-cases', label: 'Test Cases', icon: <FlaskConical size={17} />, path: '/test-cases' },
   { key: '/runs/new', label: 'New Run', icon: <PlayCircle size={17} />, path: '/runs/new' },
   { key: '/runs', label: 'Runs', icon: <Activity size={17} />, path: '/runs' },
-  { key: '/artifacts/artifact-shot-001', label: 'Artifacts', icon: <FileArchive size={17} />, path: '/artifacts/artifact-shot-001' },
+  { key: '/artifacts', label: 'Artifacts', icon: <FileArchive size={17} />, path: '/artifacts' },
 ];
 
 const selectedKey = (pathname: string) => {
@@ -24,7 +24,7 @@ const selectedKey = (pathname: string) => {
   if (pathname.startsWith('/test-cases')) return '/test-cases';
   if (pathname.startsWith('/runs/new')) return '/runs/new';
   if (pathname.startsWith('/runs')) return '/runs';
-  if (pathname.startsWith('/artifacts')) return '/artifacts/artifact-shot-001';
+  if (pathname.startsWith('/artifacts')) return '/artifacts';
   return pathname;
 };
 

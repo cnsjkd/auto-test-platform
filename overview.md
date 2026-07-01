@@ -13,6 +13,7 @@
 - P0 冒烟套件质量报告：`qa_p0_smoke_suite/QUALITY_REPORT.md`。
 - 可见真机操作台验证证据：`visible_console_verification/visible_console_verification.json` 与 `backend/artifacts/2026-07-01/manual/screenshot/visible_console_after_demo.png`。
 - 自动化流程编排验证证据：`automation_flow_verification/automation_flow_gate_result.json`、`automation_flow_verification/automation_flow_summary.json`、`automation_flow_verification/automation_flow_run_response.json`。
+- 异步运行监控验证证据：`async_run_monitor_verification/async_run_monitor_summary.json`、`async_run_monitor_verification/async_run_monitor_detail.json`。
 
 ## 已完成
 
@@ -38,6 +39,12 @@
   - 前端设备详情页新增“自动化流程编排”卡片，一键运行 `HOME -> 通知栏 -> 快捷设置 -> BACK -> BACK`。
   - 网页 Artifact 预览已直接渲染真实 screenshot / pixel_audit 图片，不再只显示占位。
   - 真实 A2 联调通过：5/5 steps success，生成 5 张 1200x1920 PNG、final logcat、summary JSON；shell action 拦截 400/40001，Pixel 审计缺失拦截 400/52003。
+- 完成“启动运行 -> 监控过程 -> 查看结果证据”闭环：
+  - 后端新增 `POST /api/test-runs/async` 与 `POST /api/smoke-suite/p0/run-async`，启动后立即返回 run id 和 `monitorUrl`。
+  - 前端 `/runs/new` 的按钮已明确进入监控页，`/runs/:id` 每 2 秒刷新真实运行详情，显示整体进度、每条用例状态、动作级步骤、commandId、artifact 数量和最新截图。
+  - 前端 `/artifacts` 改成真实 artifact 列表页，不再跳 mock id；默认 `VITE_ENABLE_MOCK_FALLBACK=false`，后端不可用时直接报错而不是展示模拟数据。
+  - P0 冒烟套件扩充为更多肉眼可见真实 A2 流程：通知栏展开采证、快捷设置展开采证、HOME→通知栏→快捷设置→返回完整流程。
+  - 真实 A2 异步监控验证通过：`POST /api/smoke-suite/p0/run-async` 返回 HTTP 202、`monitorUrl=/runs/7`；监控详情包含 7 条用例结果、15 个真实 artifact、动作级步骤数 1/1/1/1/5/5/9，截图/UI XML/logcat/report 全部进入结果页。
 
 ## 最终 QA / 工程门禁结果
 
@@ -47,7 +54,7 @@
 | P0 冒烟套件 | 100%（7/7 用例通过） |
 | P0 缺陷 | 0 |
 | P1 缺陷 | 0 |
-| 后端测试 | `23 passed` |
+| 后端测试 | `26 passed` |
 | 后端 compileall | 通过 |
 | 前端 TypeScript/build | 通过 |
 | GitHub CI | 已新增，等待远端 Actions 首次运行结果 |
@@ -61,7 +68,7 @@
 
 - `README.md`：GitHub 仓库入口说明，覆盖本地启动、A2 连接、P0 冒烟套件和质量门禁。
 - `.github/workflows/ci.yml`：GitHub Actions CI。
-- `.env.example`：本地环境变量模板，含 `VITE_DEV_PROXY_TARGET`。
+- `.env.example`：本地环境变量模板，含 `VITE_DEV_PROXY_TARGET` 与默认关闭的 `VITE_ENABLE_MOCK_FALLBACK=false`。
 - `DEPLOYMENT_DELIVERY.md`：Windows 本机部署、ADB 真机连接、前后端启动、健康检查、核心流程、已知限制与回滚说明。
 - `qa_final_real_a2_regression/QUALITY_REPORT.md`：最终独立真实 A2 质量报告。
 - `qa_p0_smoke_suite/QUALITY_REPORT.md`：P0 冒烟套件独立 QA 报告。

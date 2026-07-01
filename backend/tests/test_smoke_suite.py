@@ -66,9 +66,11 @@ def test_p0_smoke_suite_returns_case_ids_and_action_contract(client):
     assert data["pixelFallbackCount"] == 1
     assert all("commandType" not in str(case["steps"]) for case in data["cases"])
     steps = [step for case in data["cases"] for step in case["steps"]]
-    assert {"screenshot", "dump_hierarchy", "logcat_snapshot", "open_notification", "open_quick_settings", "keyevent", "pixel_tap"}.issubset(
-        {step["action"] for step in steps}
-    )
+    actions = [step["action"] for step in steps]
+    assert {"screenshot", "dump_hierarchy", "logcat_snapshot", "open_notification", "open_quick_settings", "keyevent", "pixel_tap"}.issubset(set(actions))
+    assert actions.count("screenshot") >= 5
+    assert actions.count("dump_hierarchy") >= 3
+    assert actions.count("logcat_snapshot") >= 2
     pixel_step = next(step for step in steps if step["action"] == "pixel_tap")
     for field in ["pixelFallback", "fallbackReason", "x", "y", "screenWidth", "screenHeight", "orientation", "riskNote", "improvementSuggestion"]:
         assert pixel_step[field] not in (None, "")
@@ -138,6 +140,32 @@ def test_p0_smoke_suite_api_run_with_risk_accepted_uses_test_run_service(client)
     assert request.config["riskAccepted"] is True
     assert request.config["trigger"] == "api-test"
 
+
+
+def test_p0_smoke_suite_async_returns_queued_run_and_monitor_url(client):
+    response = client.post("/api/smoke-suite/p0/run-async", json={"deviceId": 42, "riskAccepted": True, "config": {"trigger": "async-test"}})
+
+    assert response.status_code == 202
+    payload = response.json()
+    assert payload["code"] == 0
+    data = payload["data"]
+    assert data["suite"]["caseCount"] == 7
+    assert data["run"]["status"] in {"queued", "running", "passed", "failed"}
+    assert data["run"]["deviceId"] == 42
+    assert data["monitorUrl"] == f"/runs/{data['run']['id']}"
+
+    detail_response = client.get(f"/api/test-runs/{data['run']['id']}")
+    assert detail_response.status_code == 200
+    assert detail_response.json()["data"]["run"]["id"] == data["run"]["id"]
+
+
+def test_p0_smoke_suite_async_requires_risk_accepted(client):
+    response = client.post("/api/smoke-suite/p0/run-async", json={"deviceId": 42, "riskAccepted": False})
+
+    assert response.status_code == 422
+    payload = response.json()
+    assert payload["code"] == 42201
+    assert payload["data"]["details"]["requiresRiskAcceptance"] is True
 
 
 def test_p0_smoke_suite_success_run_uses_test_run_service(tmp_path, monkeypatch):

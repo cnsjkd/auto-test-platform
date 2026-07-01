@@ -22,6 +22,7 @@ export function App() {
         <Route path="runs/new" element={<NewRunPage />} />
         <Route path="runs" element={<RunsPage />} />
         <Route path="runs/:id" element={<RunDetailPage />} />
+        <Route path="artifacts" element={<ArtifactPage />} />
         <Route path="artifacts/:id" element={<ArtifactPage />} />
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />

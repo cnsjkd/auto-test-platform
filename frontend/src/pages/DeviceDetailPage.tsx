@@ -3,7 +3,7 @@ import { Camera, FileCode2, Home, ListTree, PanelTopOpen, RotateCcw, Settings2, 
 import { ReactNode, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { api } from '../api/client';
-import type { Action, Artifact, Device, DeviceCommandResult, FlowRunResponse, FlowStepResult } from '../api/types';
+import type { Action, Artifact, Device, DeviceCommandResult, FlowDefinitionStep, FlowRunResponse, FlowStepResult } from '../api/types';
 import { ArtifactPreview } from '../components/ArtifactPreview';
 import { StatusBadge } from '../components/StatusBadge';
 
@@ -19,12 +19,54 @@ interface ActionHistoryItem {
   artifactCount: number;
 }
 
-const safeFlowSteps = [
-  { id: 'home', name: '回到主页', action: 'keyevent' as const, params: { key: 'HOME' }, description: '发送 HOME 键，确保从稳定起点开始。' },
-  { id: 'notification', name: '展开通知栏', action: 'open_notification' as const, description: '打开系统通知栏，验证 ADB 可见动作链路。' },
-  { id: 'quick-settings', name: '展开快捷设置', action: 'open_quick_settings' as const, description: '展开快捷设置面板，验证连续系统动作。' },
-  { id: 'back-quick-settings', name: '返回关闭快捷设置', action: 'keyevent' as const, params: { key: 'BACK' }, description: '发送 BACK 键关闭当前面板。' },
-  { id: 'back-notification', name: '返回关闭通知栏', action: 'keyevent' as const, params: { key: 'BACK' }, description: '再次发送 BACK 键回到初始状态。' },
+interface FlowTemplate {
+  id: string;
+  name: string;
+  description: string;
+  steps: FlowDefinitionStep[];
+}
+
+const flowTemplates: FlowTemplate[] = [
+  {
+    id: 'a2-notification-evidence-flow',
+    name: '通知栏展开 + 截图 + UI XML',
+    description: 'HOME 起步，展开通知栏，采集截图和 UI XML，再 BACK 复位。真机屏幕应明显出现通知面板。',
+    steps: [
+      { id: 'home', name: '回到主页', action: 'keyevent' as const, params: { key: 'HOME' }, timeoutSec: 10, description: '发送 HOME 键，确保从稳定起点开始。' },
+      { id: 'notification', name: '展开通知栏', action: 'open_notification' as const, timeoutSec: 10, description: '打开系统通知栏，验证 ADB 可见动作链路。' },
+      { id: 'screenshot-notification', name: '通知栏截图', action: 'screenshot' as const, timeoutSec: 10, description: '采集通知栏展开后的真实截图。' },
+      { id: 'hierarchy-notification', name: '通知栏 UI XML', action: 'dump_hierarchy' as const, timeoutSec: 20, description: '采集通知栏状态下的 UI XML。' },
+      { id: 'back', name: '返回关闭通知栏', action: 'keyevent' as const, params: { key: 'BACK' }, timeoutSec: 10, description: '发送 BACK 键回到初始状态。' },
+    ],
+  },
+  {
+    id: 'a2-quick-settings-evidence-flow',
+    name: '快捷设置展开 + 截图 + UI XML',
+    description: 'HOME 起步，展开快捷设置，采集截图和 UI XML，再 BACK 复位。真机屏幕应明显出现快捷设置面板。',
+    steps: [
+      { id: 'home', name: '回到主页', action: 'keyevent' as const, params: { key: 'HOME' }, timeoutSec: 10, description: '发送 HOME 键，确保从稳定起点开始。' },
+      { id: 'quick-settings', name: '展开快捷设置', action: 'open_quick_settings' as const, timeoutSec: 10, description: '展开快捷设置面板，验证连续系统动作。' },
+      { id: 'screenshot-quick-settings', name: '快捷设置截图', action: 'screenshot' as const, timeoutSec: 10, description: '采集快捷设置展开后的真实截图。' },
+      { id: 'hierarchy-quick-settings', name: '快捷设置 UI XML', action: 'dump_hierarchy' as const, timeoutSec: 20, description: '采集快捷设置状态下的 UI XML。' },
+      { id: 'back', name: '返回关闭快捷设置', action: 'keyevent' as const, params: { key: 'BACK' }, timeoutSec: 10, description: '发送 BACK 键关闭当前面板。' },
+    ],
+  },
+  {
+    id: 'a2-full-system-panel-flow',
+    name: '完整可见流程：HOME → 通知栏 → 快捷设置 → 返回',
+    description: '连续执行 HOME、通知栏、快捷设置、BACK、BACK，并在关键节点截图与日志采证。',
+    steps: [
+      { id: 'home', name: '回到主页', action: 'keyevent' as const, params: { key: 'HOME' }, timeoutSec: 10, description: '发送 HOME 键，确保从稳定起点开始。' },
+      { id: 'screenshot-home', name: '主页截图', action: 'screenshot' as const, timeoutSec: 10, description: '采集起点截图。' },
+      { id: 'notification', name: '展开通知栏', action: 'open_notification' as const, timeoutSec: 10, description: '打开系统通知栏。' },
+      { id: 'screenshot-notification', name: '通知栏截图', action: 'screenshot' as const, timeoutSec: 10, description: '采集通知栏截图。' },
+      { id: 'quick-settings', name: '展开快捷设置', action: 'open_quick_settings' as const, timeoutSec: 10, description: '展开快捷设置面板。' },
+      { id: 'screenshot-quick-settings', name: '快捷设置截图', action: 'screenshot' as const, timeoutSec: 10, description: '采集快捷设置截图。' },
+      { id: 'back-quick-settings', name: '返回关闭快捷设置', action: 'keyevent' as const, params: { key: 'BACK' }, timeoutSec: 10, description: '发送 BACK 键关闭当前面板。' },
+      { id: 'back-notification', name: '返回关闭通知栏', action: 'keyevent' as const, params: { key: 'BACK' }, timeoutSec: 10, description: '再次发送 BACK 键回到初始状态。' },
+      { id: 'logcat', name: '采集 logcat', action: 'logcat_snapshot' as const, params: { durationSec: 3, buffers: ['main', 'system'] }, timeoutSec: 15, description: '采集系统日志作为流程证据。' },
+    ],
+  },
 ];
 
 const statusColor = (status?: string) => {
@@ -85,6 +127,7 @@ export function DeviceDetailPage() {
   const [history, setHistory] = useState<ActionHistoryItem[]>([]);
   const [loadingAction, setLoadingAction] = useState<string>();
   const [flowRun, setFlowRun] = useState<FlowRunResponse>();
+  const [selectedFlowId, setSelectedFlowId] = useState(flowTemplates[2].id);
   const [runningFlow, setRunningFlow] = useState(false);
   const [flowError, setFlowError] = useState<string>();
   const [flowDegraded, setFlowDegraded] = useState(false);
@@ -142,6 +185,8 @@ export function DeviceDetailPage() {
     return result.data.artifact;
   };
 
+  const selectedFlow = useMemo(() => flowTemplates.find((item) => item.id === selectedFlowId) ?? flowTemplates[0], [selectedFlowId]);
+
   const runFlow = async () => {
     if (!device) return;
     setRunningFlow(true);
@@ -150,16 +195,16 @@ export function DeviceDetailPage() {
     try {
       const result = await api.runFlow({
         deviceId: device.id,
-        flowId: 'a2-safe-system-panel-flow',
-        name: 'A2 安全系统面板流程',
-        steps: safeFlowSteps,
+        flowId: selectedFlow.id,
+        name: selectedFlow.name,
+        steps: selectedFlow.steps,
         captureArtifacts: true,
       });
       setFlowRun(result.data);
       appendArtifacts(result.data.artifacts);
       setFlowDegraded(Boolean(result.degraded));
       appendHistory({
-        label: 'message' in result.data.run && result.data.run.message ? result.data.run.message : 'A2 安全系统面板流程',
+        label: 'message' in result.data.run && result.data.run.message ? result.data.run.message : selectedFlow.name,
         status: result.data.run.status === 'failed' ? 'failed' : 'success',
         artifactCount: result.data.artifacts.length,
       });
@@ -176,7 +221,7 @@ export function DeviceDetailPage() {
 
   const flowStepById = useMemo(() => {
     const map = new Map<string, FlowStepResult>();
-    flowRun?.steps.forEach((step) => map.set(step.id, step));
+    flowRun?.steps.forEach((step) => map.set(String(step.id), step));
     return map;
   }, [flowRun]);
 
@@ -298,12 +343,34 @@ export function DeviceDetailPage() {
           <div className="console-card" style={{ padding: 16 }}>
             <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 16 }}>
               <div>
-                <h2 style={{ marginTop: 0 }}>流程编排运行</h2>
-                <p style={{ color: 'var(--text-secondary)', margin: '0 0 12px' }}>内置安全流程：HOME -&gt; 通知栏 -&gt; 快捷设置 -&gt; BACK -&gt; BACK。后端不可用时展示本地预览，参数校验错误会直接显示。</p>
+                <h2 style={{ marginTop: 0 }}>真实自动化流程编排</h2>
+                <p style={{ color: 'var(--text-secondary)', margin: '0 0 12px' }}>选择一条真实 A2 流程后执行：页面会调用后端正式接口，真机执行动作，并把每一步截图、UI XML、logcat 放入证据链。默认不再使用本地 mock。</p>
               </div>
               <Button type="primary" loading={runningFlow} disabled={!device || device.status !== 'online'} icon={<Zap size={16} />} onClick={runFlow}>
                 执行流程
               </Button>
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: 10, marginBottom: 14 }}>
+              {flowTemplates.map((template) => (
+                <button
+                  key={template.id}
+                  onClick={() => setSelectedFlowId(template.id)}
+                  disabled={runningFlow}
+                  style={{
+                    textAlign: 'left',
+                    border: selectedFlow.id === template.id ? '1px solid var(--color-primary)' : '1px solid var(--border-default)',
+                    borderRadius: 'var(--radius-card)',
+                    background: selectedFlow.id === template.id ? 'rgba(37, 99, 235, 0.14)' : 'var(--bg-elevated)',
+                    color: 'var(--text-primary)',
+                    padding: 12,
+                    cursor: runningFlow ? 'not-allowed' : 'pointer',
+                  }}
+                >
+                  <strong>{template.name}</strong>
+                  <span style={{ display: 'block', color: 'var(--text-secondary)', marginTop: 6, fontSize: 12 }}>{template.description}</span>
+                  <span className="mono" style={{ display: 'block', color: 'var(--text-muted)', marginTop: 8 }}>{template.steps.length} steps</span>
+                </button>
+              ))}
             </div>
             <Space wrap style={{ marginBottom: 12 }}>
               <Tag color={statusColor(flowRun?.run.status)}>{flowRun?.run.status ?? 'idle'}</Tag>
@@ -313,7 +380,7 @@ export function DeviceDetailPage() {
             {flowDegraded ? <Alert type="warning" showIcon message="后端流程 API 不可用，当前为本地 mock 预览" style={{ marginBottom: 12 }} /> : null}
             {flowError ? <Alert type="error" showIcon message="流程执行失败" description={flowError} style={{ marginBottom: 12 }} /> : null}
             <List
-              dataSource={safeFlowSteps}
+              dataSource={selectedFlow.steps}
               renderItem={(step, index) => {
                 const result = flowStepById.get(step.id);
                 const screenshot = result?.artifacts.find((artifact) => artifact.type === 'screenshot');

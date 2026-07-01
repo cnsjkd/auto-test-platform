@@ -1,0 +1,653 @@
+{
+  "code": 0,
+  "data": {
+    "run": {
+      "id": 7,
+      "status": "passed",
+      "deviceId": 1,
+      "deviceSerial": "A2PBVT1CFADBC000784",
+      "totalCount": 7,
+      "passedCount": 7,
+      "failedCount": 0,
+      "skippedCount": 0,
+      "pixelFallbackCount": 1,
+      "startedAt": "2026-07-01T06:35:55.267609",
+      "endedAt": "2026-07-01T06:36:09.562170",
+      "reportPath": "D:\\WorkBuddyData\\2026-06-30-11-43-37\\backend\\artifacts\\2026-07-01\\7\\report_html\\run_7_report.html",
+      "config": {
+        "trigger": "async-monitor-verification",
+        "suiteId": "p0_smoke",
+        "suiteName": "A2 P0 冒烟套件",
+        "suiteTag": "p0_smoke",
+        "riskAccepted": true,
+        "requiresRiskAcceptance": true,
+        "acceptanceNotes": [
+          "本套件包含 1 个 Pixel Fallback 审计链路验证用例。",
+          "Pixel 坐标默认按 A2 1200x1920 portrait 设计，执行前需确认当前设备分辨率与方向一致。",
+          "坐标点选择低风险左侧边缘空白区域，仅用于验证审计链路；稳定业务用例应优先补充 resource-id/content-desc 语义定位。"
+        ],
+        "executionMode": "async"
+      },
+      "createdAt": "2026-07-01T06:35:55.227661",
+      "updatedAt": "2026-07-01T06:36:09.626310"
+    },
+    "results": [
+      {
+        "id": 25,
+        "runId": 7,
+        "caseId": 1,
+        "caseName": "[P0 Smoke] 截图 artifact 链路",
+        "deviceId": 1,
+        "status": "passed",
+        "durationMs": 529,
+        "errorCode": null,
+        "message": "passed",
+        "locatorStrategy": "system",
+        "pixelFallbackUsed": false,
+        "pixelAudit": null,
+        "startedAt": "2026-07-01T06:35:55.288730",
+        "endedAt": "2026-07-01T06:35:55.829935",
+        "raw": {
+          "caseName": "[P0 Smoke] 截图 artifact 链路",
+          "steps": [
+            {
+              "index": 0,
+              "action": "screenshot",
+              "commandId": 40,
+              "status": "success",
+              "artifactIds": [
+                48
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": 26,
+        "runId": 7,
+        "caseId": 2,
+        "caseName": "[P0 Smoke] UI XML artifact 链路",
+        "deviceId": 1,
+        "status": "passed",
+        "durationMs": 2499,
+        "errorCode": null,
+        "message": "passed",
+        "locatorStrategy": "system",
+        "pixelFallbackUsed": false,
+        "pixelAudit": null,
+        "startedAt": "2026-07-01T06:35:55.850652",
+        "endedAt": "2026-07-01T06:35:58.352297",
+        "raw": {
+          "caseName": "[P0 Smoke] UI XML artifact 链路",
+          "steps": [
+            {
+              "index": 0,
+              "action": "dump_hierarchy",
+              "commandId": 41,
+              "status": "success",
+              "artifactIds": [
+                49
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": 27,
+        "runId": 7,
+        "caseId": 3,
+        "caseName": "[P0 Smoke] logcat artifact 链路",
+        "deviceId": 1,
+        "status": "passed",
+        "durationMs": 265,
+        "errorCode": null,
+        "message": "passed",
+        "locatorStrategy": "system",
+        "pixelFallbackUsed": false,
+        "pixelAudit": null,
+        "startedAt": "2026-07-01T06:35:58.365459",
+        "endedAt": "2026-07-01T06:35:58.633443",
+        "raw": {
+          "caseName": "[P0 Smoke] logcat artifact 链路",
+          "steps": [
+            {
+              "index": 0,
+              "action": "logcat_snapshot",
+              "commandId": 42,
+              "status": "success",
+              "artifactIds": [
+                50
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": 28,
+        "runId": 7,
+        "caseId": 7,
+        "caseName": "[P0 Smoke] Pixel Fallback 审计链路",
+        "deviceId": 1,
+        "status": "passed",
+        "durationMs": 1434,
+        "errorCode": null,
+        "message": "passed",
+        "locatorStrategy": "pixel_fallback",
+        "pixelFallbackUsed": true,
+        "pixelAudit": {
+          "pixelFallback": true,
+          "fallbackReason": "P0 冒烟验证 Pixel Fallback 审计链路，目标为 A2 1200x1920 portrait 左侧边缘空白点。",
+          "x": 16,
+          "y": 960,
+          "screenWidth": 1200,
+          "screenHeight": 1920,
+          "orientation": "portrait",
+          "riskNote": "坐标依赖当前 A2 分辨率与方向；点位位于左侧边缘空白区域，仅用于审计链路验证，页面布局变化仍可能导致轻微焦点变化。",
+          "improvementSuggestion": "将审计占位坐标替换为稳定 resource-id/content-desc 或文本语义定位后再用于业务断言。"
+        },
+        "startedAt": "2026-07-01T06:35:58.647337",
+        "endedAt": "2026-07-01T06:36:00.084151",
+        "raw": {
+          "caseName": "[P0 Smoke] Pixel Fallback 审计链路",
+          "steps": [
+            {
+              "index": 0,
+              "action": "pixel_tap",
+              "commandId": 43,
+              "status": "success",
+              "artifactIds": [
+                51,
+                52
+              ],
+              "pixelAudit": {
+                "pixelFallback": true,
+                "fallbackReason": "P0 冒烟验证 Pixel Fallback 审计链路，目标为 A2 1200x1920 portrait 左侧边缘空白点。",
+                "x": 16,
+                "y": 960,
+                "screenWidth": 1200,
+                "screenHeight": 1920,
+                "orientation": "portrait",
+                "riskNote": "坐标依赖当前 A2 分辨率与方向；点位位于左侧边缘空白区域，仅用于审计链路验证，页面布局变化仍可能导致轻微焦点变化。",
+                "improvementSuggestion": "将审计占位坐标替换为稳定 resource-id/content-desc 或文本语义定位后再用于业务断言。"
+              }
+            }
+          ],
+          "pixelAudit": {
+            "pixelFallback": true,
+            "fallbackReason": "P0 冒烟验证 Pixel Fallback 审计链路，目标为 A2 1200x1920 portrait 左侧边缘空白点。",
+            "x": 16,
+            "y": 960,
+            "screenWidth": 1200,
+            "screenHeight": 1920,
+            "orientation": "portrait",
+            "riskNote": "坐标依赖当前 A2 分辨率与方向；点位位于左侧边缘空白区域，仅用于审计链路验证，页面布局变化仍可能导致轻微焦点变化。",
+            "improvementSuggestion": "将审计占位坐标替换为稳定 resource-id/content-desc 或文本语义定位后再用于业务断言。"
+          }
+        }
+      },
+      {
+        "id": 29,
+        "runId": 7,
+        "caseId": 8,
+        "caseName": "[P0 Smoke] 可见动作：通知栏展开并采证",
+        "deviceId": 1,
+        "status": "passed",
+        "durationMs": 3471,
+        "errorCode": null,
+        "message": "passed",
+        "locatorStrategy": "system",
+        "pixelFallbackUsed": false,
+        "pixelAudit": null,
+        "startedAt": "2026-07-01T06:36:00.101979",
+        "endedAt": "2026-07-01T06:36:03.575310",
+        "raw": {
+          "caseName": "[P0 Smoke] 可见动作：通知栏展开并采证",
+          "steps": [
+            {
+              "index": 0,
+              "action": "keyevent",
+              "commandId": 44,
+              "status": "success",
+              "artifactIds": []
+            },
+            {
+              "index": 1,
+              "action": "open_notification",
+              "commandId": 45,
+              "status": "success",
+              "artifactIds": []
+            },
+            {
+              "index": 2,
+              "action": "screenshot",
+              "commandId": 46,
+              "status": "success",
+              "artifactIds": [
+                53
+              ]
+            },
+            {
+              "index": 3,
+              "action": "dump_hierarchy",
+              "commandId": 47,
+              "status": "success",
+              "artifactIds": [
+                54
+              ]
+            },
+            {
+              "index": 4,
+              "action": "keyevent",
+              "commandId": 48,
+              "status": "success",
+              "artifactIds": []
+            }
+          ]
+        }
+      },
+      {
+        "id": 30,
+        "runId": 7,
+        "caseId": 9,
+        "caseName": "[P0 Smoke] 可见动作：快捷设置展开并采证",
+        "deviceId": 1,
+        "status": "passed",
+        "durationMs": 3509,
+        "errorCode": null,
+        "message": "passed",
+        "locatorStrategy": "system",
+        "pixelFallbackUsed": false,
+        "pixelAudit": null,
+        "startedAt": "2026-07-01T06:36:03.597756",
+        "endedAt": "2026-07-01T06:36:07.111921",
+        "raw": {
+          "caseName": "[P0 Smoke] 可见动作：快捷设置展开并采证",
+          "steps": [
+            {
+              "index": 0,
+              "action": "keyevent",
+              "commandId": 49,
+              "status": "success",
+              "artifactIds": []
+            },
+            {
+              "index": 1,
+              "action": "open_quick_settings",
+              "commandId": 50,
+              "status": "success",
+              "artifactIds": []
+            },
+            {
+              "index": 2,
+              "action": "screenshot",
+              "commandId": 51,
+              "status": "success",
+              "artifactIds": [
+                55
+              ]
+            },
+            {
+              "index": 3,
+              "action": "dump_hierarchy",
+              "commandId": 52,
+              "status": "success",
+              "artifactIds": [
+                56
+              ]
+            },
+            {
+              "index": 4,
+              "action": "keyevent",
+              "commandId": 53,
+              "status": "success",
+              "artifactIds": []
+            }
+          ]
+        }
+      },
+      {
+        "id": 31,
+        "runId": 7,
+        "caseId": 10,
+        "caseName": "[P0 Smoke] 可见流程：HOME→通知栏→快捷设置→返回",
+        "deviceId": 1,
+        "status": "passed",
+        "durationMs": 2405,
+        "errorCode": null,
+        "message": "passed",
+        "locatorStrategy": "system",
+        "pixelFallbackUsed": false,
+        "pixelAudit": null,
+        "startedAt": "2026-07-01T06:36:07.134130",
+        "endedAt": "2026-07-01T06:36:09.543489",
+        "raw": {
+          "caseName": "[P0 Smoke] 可见流程：HOME→通知栏→快捷设置→返回",
+          "steps": [
+            {
+              "index": 0,
+              "action": "keyevent",
+              "commandId": 54,
+              "status": "success",
+              "artifactIds": []
+            },
+            {
+              "index": 1,
+              "action": "screenshot",
+              "commandId": 55,
+              "status": "success",
+              "artifactIds": [
+                57
+              ]
+            },
+            {
+              "index": 2,
+              "action": "open_notification",
+              "commandId": 56,
+              "status": "success",
+              "artifactIds": []
+            },
+            {
+              "index": 3,
+              "action": "screenshot",
+              "commandId": 57,
+              "status": "success",
+              "artifactIds": [
+                58
+              ]
+            },
+            {
+              "index": 4,
+              "action": "open_quick_settings",
+              "commandId": 58,
+              "status": "success",
+              "artifactIds": []
+            },
+            {
+              "index": 5,
+              "action": "screenshot",
+              "commandId": 59,
+              "status": "success",
+              "artifactIds": [
+                59
+              ]
+            },
+            {
+              "index": 6,
+              "action": "keyevent",
+              "commandId": 60,
+              "status": "success",
+              "artifactIds": []
+            },
+            {
+              "index": 7,
+              "action": "keyevent",
+              "commandId": 61,
+              "status": "success",
+              "artifactIds": []
+            },
+            {
+              "index": 8,
+              "action": "logcat_snapshot",
+              "commandId": 62,
+              "status": "success",
+              "artifactIds": [
+                60
+              ]
+            }
+          ]
+        }
+      }
+    ],
+    "artifacts": [
+      {
+        "id": 48,
+        "runId": 7,
+        "resultId": 25,
+        "deviceId": 1,
+        "type": "screenshot",
+        "path": "D:\\WorkBuddyData\\2026-06-30-11-43-37\\backend\\artifacts\\2026-07-01\\7\\screenshot\\screenshot_143555_794457.png",
+        "fileName": "screenshot_143555_794457.png",
+        "mimeType": "image/png",
+        "sizeBytes": 296747,
+        "checksum": "d9e7d9d5e82fab51cadbfe9618310b60a4ce6bdb2788809b0e081cf66396b173",
+        "meta": {
+          "serial": "A2PBVT1CFADBC000784"
+        },
+        "createdAt": "2026-07-01T06:35:55.826619"
+      },
+      {
+        "id": 49,
+        "runId": 7,
+        "resultId": 26,
+        "deviceId": 1,
+        "type": "hierarchy",
+        "path": "D:\\WorkBuddyData\\2026-06-30-11-43-37\\backend\\artifacts\\2026-07-01\\7\\hierarchy\\hierarchy_143558_321766.xml",
+        "fileName": "hierarchy_143558_321766.xml",
+        "mimeType": "application/xml",
+        "sizeBytes": 23355,
+        "checksum": "1e8ccc175182079f22b2f709de8b90c4e09c5e5280108b98d848ebda545324f2",
+        "meta": {
+          "serial": "A2PBVT1CFADBC000784"
+        },
+        "createdAt": "2026-07-01T06:35:58.351095"
+      },
+      {
+        "id": 50,
+        "runId": 7,
+        "resultId": 27,
+        "deviceId": 1,
+        "type": "logcat",
+        "path": "D:\\WorkBuddyData\\2026-06-30-11-43-37\\backend\\artifacts\\2026-07-01\\7\\logcat\\logcat_143558_593029.txt",
+        "fileName": "logcat_143558_593029.txt",
+        "mimeType": "text/plain",
+        "sizeBytes": 3346983,
+        "checksum": "cc7dfe8c27ed10586834729f0deb2b9845cc539a23233d0b54ef8511d57d8d3e",
+        "meta": {
+          "serial": "A2PBVT1CFADBC000784",
+          "durationSec": 3,
+          "buffers": [
+            "main",
+            "system",
+            "crash"
+          ]
+        },
+        "createdAt": "2026-07-01T06:35:58.631980"
+      },
+      {
+        "id": 51,
+        "runId": 7,
+        "resultId": 28,
+        "deviceId": 1,
+        "type": "screenshot",
+        "path": "D:\\WorkBuddyData\\2026-06-30-11-43-37\\backend\\artifacts\\2026-07-01\\7\\screenshot\\pixel_before.png",
+        "fileName": "pixel_before.png",
+        "mimeType": "image/png",
+        "sizeBytes": 296747,
+        "checksum": "d9e7d9d5e82fab51cadbfe9618310b60a4ce6bdb2788809b0e081cf66396b173",
+        "meta": {
+          "serial": "A2PBVT1CFADBC000784"
+        },
+        "createdAt": "2026-07-01T06:35:59.269686"
+      },
+      {
+        "id": 52,
+        "runId": 7,
+        "resultId": 28,
+        "deviceId": 1,
+        "type": "screenshot",
+        "path": "D:\\WorkBuddyData\\2026-06-30-11-43-37\\backend\\artifacts\\2026-07-01\\7\\screenshot\\pixel_after.png",
+        "fileName": "pixel_after.png",
+        "mimeType": "image/png",
+        "sizeBytes": 296747,
+        "checksum": "d9e7d9d5e82fab51cadbfe9618310b60a4ce6bdb2788809b0e081cf66396b173",
+        "meta": {
+          "serial": "A2PBVT1CFADBC000784"
+        },
+        "createdAt": "2026-07-01T06:36:00.080528"
+      },
+      {
+        "id": 53,
+        "runId": 7,
+        "resultId": 29,
+        "deviceId": 1,
+        "type": "screenshot",
+        "path": "D:\\WorkBuddyData\\2026-06-30-11-43-37\\backend\\artifacts\\2026-07-01\\7\\screenshot\\screenshot_143600_780944.png",
+        "fileName": "screenshot_143600_780944.png",
+        "mimeType": "image/png",
+        "sizeBytes": 296747,
+        "checksum": "d9e7d9d5e82fab51cadbfe9618310b60a4ce6bdb2788809b0e081cf66396b173",
+        "meta": {
+          "serial": "A2PBVT1CFADBC000784"
+        },
+        "createdAt": "2026-07-01T06:36:00.801003"
+      },
+      {
+        "id": 54,
+        "runId": 7,
+        "resultId": 29,
+        "deviceId": 1,
+        "type": "hierarchy",
+        "path": "D:\\WorkBuddyData\\2026-06-30-11-43-37\\backend\\artifacts\\2026-07-01\\7\\hierarchy\\hierarchy_143603_395584.xml",
+        "fileName": "hierarchy_143603_395584.xml",
+        "mimeType": "application/xml",
+        "sizeBytes": 23355,
+        "checksum": "bdb3b03e9c78c74c39d35a109028b7483c57fc85a63005cb6aa669c99cd1130f",
+        "meta": {
+          "serial": "A2PBVT1CFADBC000784"
+        },
+        "createdAt": "2026-07-01T06:36:03.436882"
+      },
+      {
+        "id": 55,
+        "runId": 7,
+        "resultId": 30,
+        "deviceId": 1,
+        "type": "screenshot",
+        "path": "D:\\WorkBuddyData\\2026-06-30-11-43-37\\backend\\artifacts\\2026-07-01\\7\\screenshot\\screenshot_143604_264140.png",
+        "fileName": "screenshot_143604_264140.png",
+        "mimeType": "image/png",
+        "sizeBytes": 296784,
+        "checksum": "21fc37805e20a8554bb40fe6355aa798e9df294195829fa483d277e607de2c7d",
+        "meta": {
+          "serial": "A2PBVT1CFADBC000784"
+        },
+        "createdAt": "2026-07-01T06:36:04.287152"
+      },
+      {
+        "id": 56,
+        "runId": 7,
+        "resultId": 30,
+        "deviceId": 1,
+        "type": "hierarchy",
+        "path": "D:\\WorkBuddyData\\2026-06-30-11-43-37\\backend\\artifacts\\2026-07-01\\7\\hierarchy\\hierarchy_143606_918404.xml",
+        "fileName": "hierarchy_143606_918404.xml",
+        "mimeType": "application/xml",
+        "sizeBytes": 23355,
+        "checksum": "bdb3b03e9c78c74c39d35a109028b7483c57fc85a63005cb6aa669c99cd1130f",
+        "meta": {
+          "serial": "A2PBVT1CFADBC000784"
+        },
+        "createdAt": "2026-07-01T06:36:06.956892"
+      },
+      {
+        "id": 57,
+        "runId": 7,
+        "resultId": 31,
+        "deviceId": 1,
+        "type": "screenshot",
+        "path": "D:\\WorkBuddyData\\2026-06-30-11-43-37\\backend\\artifacts\\2026-07-01\\7\\screenshot\\screenshot_143607_706637.png",
+        "fileName": "screenshot_143607_706637.png",
+        "mimeType": "image/png",
+        "sizeBytes": 296784,
+        "checksum": "21fc37805e20a8554bb40fe6355aa798e9df294195829fa483d277e607de2c7d",
+        "meta": {
+          "serial": "A2PBVT1CFADBC000784"
+        },
+        "createdAt": "2026-07-01T06:36:07.737317"
+      },
+      {
+        "id": 58,
+        "runId": 7,
+        "resultId": 31,
+        "deviceId": 1,
+        "type": "screenshot",
+        "path": "D:\\WorkBuddyData\\2026-06-30-11-43-37\\backend\\artifacts\\2026-07-01\\7\\screenshot\\screenshot_143608_345490.png",
+        "fileName": "screenshot_143608_345490.png",
+        "mimeType": "image/png",
+        "sizeBytes": 296784,
+        "checksum": "21fc37805e20a8554bb40fe6355aa798e9df294195829fa483d277e607de2c7d",
+        "meta": {
+          "serial": "A2PBVT1CFADBC000784"
+        },
+        "createdAt": "2026-07-01T06:36:08.372579"
+      },
+      {
+        "id": 59,
+        "runId": 7,
+        "resultId": 31,
+        "deviceId": 1,
+        "type": "screenshot",
+        "path": "D:\\WorkBuddyData\\2026-06-30-11-43-37\\backend\\artifacts\\2026-07-01\\7\\screenshot\\screenshot_143608_928295.png",
+        "fileName": "screenshot_143608_928295.png",
+        "mimeType": "image/png",
+        "sizeBytes": 296784,
+        "checksum": "21fc37805e20a8554bb40fe6355aa798e9df294195829fa483d277e607de2c7d",
+        "meta": {
+          "serial": "A2PBVT1CFADBC000784"
+        },
+        "createdAt": "2026-07-01T06:36:08.951010"
+      },
+      {
+        "id": 60,
+        "runId": 7,
+        "resultId": 31,
+        "deviceId": 1,
+        "type": "logcat",
+        "path": "D:\\WorkBuddyData\\2026-06-30-11-43-37\\backend\\artifacts\\2026-07-01\\7\\logcat\\logcat_143609_504027.txt",
+        "fileName": "logcat_143609_504027.txt",
+        "mimeType": "text/plain",
+        "sizeBytes": 3337178,
+        "checksum": "77220bf50f5e92b89481a0120286f2c24c7a4bd5cecafbe3888986790f6aed4d",
+        "meta": {
+          "serial": "A2PBVT1CFADBC000784",
+          "durationSec": 3,
+          "buffers": [
+            "main",
+            "system"
+          ]
+        },
+        "createdAt": "2026-07-01T06:36:09.541265"
+      },
+      {
+        "id": 61,
+        "runId": 7,
+        "resultId": null,
+        "deviceId": 1,
+        "type": "report_json",
+        "path": "D:\\WorkBuddyData\\2026-06-30-11-43-37\\backend\\artifacts\\2026-07-01\\7\\report_json\\run_7_report.json",
+        "fileName": "run_7_report.json",
+        "mimeType": "application/json",
+        "sizeBytes": 19673,
+        "checksum": "a588bd7301c68779517912d795ffd563371453f48454c817e14bb3b176693c24",
+        "meta": {},
+        "createdAt": "2026-07-01T06:36:09.596825"
+      },
+      {
+        "id": 62,
+        "runId": 7,
+        "resultId": null,
+        "deviceId": 1,
+        "type": "report_html",
+        "path": "D:\\WorkBuddyData\\2026-06-30-11-43-37\\backend\\artifacts\\2026-07-01\\7\\report_html\\run_7_report.html",
+        "fileName": "run_7_report.html",
+        "mimeType": "text/html",
+        "sizeBytes": 4071,
+        "checksum": "727d0c5180e57bc44074cc95ed202cb72ddc7ce72ffc9c63254de1e23453194a",
+        "meta": {},
+        "createdAt": "2026-07-01T06:36:09.623920"
+      }
+    ]
+  },
+  "message": "",
+  "requestId": "6ffc1316-358a-4248-a0f5-bcc939e1a9d1"
+}

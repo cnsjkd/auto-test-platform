@@ -1,0 +1,213 @@
+{
+  "baseUrl": "http://127.0.0.1:8011",
+  "device": {
+    "id": 1,
+    "serial": "A2PBVT1CFADBC000784",
+    "status": "online",
+    "manufacturer": "AISPEECH",
+    "model": "AINOTE-A2",
+    "androidVersion": "13",
+    "sdkInt": 33,
+    "screenWidth": 1200,
+    "screenHeight": 1920,
+    "density": 320,
+    "battery": 100,
+    "network": "Unknown",
+    "storage": "Unknown",
+    "adbStatus": "device",
+    "capabilities": {
+      "adb": {
+        "serial": "A2PBVT1CFADBC000784",
+        "adbState": "device",
+        "raw": "A2PBVT1CFADBC000784    device product:vext_k6789v1_64 model:AINOTE_A2 device:AINOTE-A2 transport_id:1",
+        "product": "vext_k6789v1_64",
+        "model": "AINOTE_A2",
+        "device": "AINOTE-A2",
+        "transport_id": "1"
+      },
+      "orientation": "portrait",
+      "battery": {
+        "available": "true",
+        "Current Battery Service state": "",
+        "AC powered": "false",
+        "USB powered": "true",
+        "Wireless powered": "false",
+        "Max charging current": "500000",
+        "Max charging voltage": "5000000",
+        "Charge counter": "4500000",
+        "status": "2",
+        "health": "2",
+        "present": "true",
+        "level": "100",
+        "scale": "100",
+        "voltage": "4340",
+        "temperature": "280",
+        "technology": "Li-ion"
+      },
+      "network": null,
+      "storage": null,
+      "wmSizeRaw": "Physical size: 1200x1920",
+      "adbAvailable": true
+    },
+    "lastSeenAt": "2026-07-01T06:35:54.345687+00:00",
+    "createdAt": "2026-07-01T03:40:14.419396",
+    "updatedAt": "2026-07-01T06:35:55.119376+00:00"
+  },
+  "suiteCaseCount": 7,
+  "startHttpStatus": 202,
+  "monitorUrl": "/runs/7",
+  "runId": 7,
+  "snapshots": [
+    {
+      "statusCode": 200,
+      "runStatus": "running",
+      "passedCount": 0,
+      "failedCount": 0,
+      "skippedCount": 0,
+      "resultCount": 0,
+      "artifactCount": 0
+    },
+    {
+      "statusCode": 200,
+      "runStatus": "running",
+      "passedCount": 1,
+      "failedCount": 0,
+      "skippedCount": 0,
+      "resultCount": 1,
+      "artifactCount": 1
+    },
+    {
+      "statusCode": 200,
+      "runStatus": "running",
+      "passedCount": 3,
+      "failedCount": 0,
+      "skippedCount": 0,
+      "resultCount": 3,
+      "artifactCount": 3
+    },
+    {
+      "statusCode": 200,
+      "runStatus": "running",
+      "passedCount": 4,
+      "failedCount": 0,
+      "skippedCount": 0,
+      "resultCount": 4,
+      "artifactCount": 5
+    },
+    {
+      "statusCode": 200,
+      "runStatus": "running",
+      "passedCount": 4,
+      "failedCount": 0,
+      "skippedCount": 0,
+      "resultCount": 4,
+      "artifactCount": 5
+    },
+    {
+      "statusCode": 200,
+      "runStatus": "running",
+      "passedCount": 5,
+      "failedCount": 0,
+      "skippedCount": 0,
+      "resultCount": 5,
+      "artifactCount": 7
+    },
+    {
+      "statusCode": 200,
+      "runStatus": "running",
+      "passedCount": 6,
+      "failedCount": 0,
+      "skippedCount": 0,
+      "resultCount": 6,
+      "artifactCount": 9
+    },
+    {
+      "statusCode": 200,
+      "runStatus": "running",
+      "passedCount": 6,
+      "failedCount": 0,
+      "skippedCount": 0,
+      "resultCount": 6,
+      "artifactCount": 9
+    },
+    {
+      "statusCode": 200,
+      "runStatus": "passed",
+      "passedCount": 7,
+      "failedCount": 0,
+      "skippedCount": 0,
+      "resultCount": 7,
+      "artifactCount": 15
+    }
+  ],
+  "finalRun": {
+    "id": 7,
+    "status": "passed",
+    "deviceId": 1,
+    "deviceSerial": "A2PBVT1CFADBC000784",
+    "totalCount": 7,
+    "passedCount": 7,
+    "failedCount": 0,
+    "skippedCount": 0,
+    "pixelFallbackCount": 1,
+    "startedAt": "2026-07-01T06:35:55.267609",
+    "endedAt": "2026-07-01T06:36:09.562170",
+    "reportPath": "D:\\WorkBuddyData\\2026-06-30-11-43-37\\backend\\artifacts\\2026-07-01\\7\\report_html\\run_7_report.html",
+    "config": {
+      "trigger": "async-monitor-verification",
+      "suiteId": "p0_smoke",
+      "suiteName": "A2 P0 冒烟套件",
+      "suiteTag": "p0_smoke",
+      "riskAccepted": true,
+      "requiresRiskAcceptance": true,
+      "acceptanceNotes": [
+        "本套件包含 1 个 Pixel Fallback 审计链路验证用例。",
+        "Pixel 坐标默认按 A2 1200x1920 portrait 设计，执行前需确认当前设备分辨率与方向一致。",
+        "坐标点选择低风险左侧边缘空白区域，仅用于验证审计链路；稳定业务用例应优先补充 resource-id/content-desc 语义定位。"
+      ],
+      "executionMode": "async"
+    },
+    "createdAt": "2026-07-01T06:35:55.227661",
+    "updatedAt": "2026-07-01T06:36:09.626310"
+  },
+  "resultCount": 7,
+  "artifactCount": 15,
+  "artifactTypes": [
+    "screenshot",
+    "hierarchy",
+    "logcat",
+    "screenshot",
+    "screenshot",
+    "screenshot",
+    "hierarchy",
+    "screenshot",
+    "hierarchy",
+    "screenshot",
+    "screenshot",
+    "screenshot",
+    "logcat",
+    "report_json",
+    "report_html"
+  ],
+  "screenshotArtifactIds": [
+    48,
+    51,
+    52,
+    53,
+    55,
+    57,
+    58,
+    59
+  ],
+  "resultStepCounts": [
+    1,
+    1,
+    1,
+    1,
+    5,
+    5,
+    9
+  ],
+  "hasStepLevelArtifacts": true,
+  "pass": true
+}

@@ -4,7 +4,7 @@ import json
 import uuid
 from pathlib import Path
 
-from fastapi import APIRouter, Depends, Query, Request, WebSocket, WebSocketDisconnect
+from fastapi import APIRouter, BackgroundTasks, Depends, Query, Request, WebSocket, WebSocketDisconnect
 from fastapi.responses import FileResponse
 from sqlalchemy import select
 from sqlalchemy.orm import Session
@@ -13,7 +13,7 @@ from app.core.config import settings
 from app.core.errors import AppException, NOT_FOUND
 from app.core.response import json_envelope
 from app.models.entities import now_utc
-from app.db.session import get_db
+from app.db.session import SessionLocal, get_db
 from app.models import Artifact
 from app.schemas.contracts import (
     DeviceCommandRequest,
@@ -40,6 +40,21 @@ command_service = CommandService(device_service=device_service)
 test_case_service = TestCaseService()
 test_run_service = TestRunService(command_service=command_service)
 smoke_suite_service = SmokeSuiteService(test_case_service=test_case_service)
+
+
+def _execute_run_in_background(run_id: int, payload: RunCreateRequest) -> None:
+    with SessionLocal() as db:
+        try:
+            test_run_service.execute_queued(db, run_id, payload)
+        except Exception:
+            db.rollback()
+            try:
+                run = test_run_service.get_run(db, run_id)
+                run.status = "failed"
+                run.ended_at = now_utc()
+                db.commit()
+            except Exception:
+                db.rollback()
 
 
 @router.get("/health")
@@ -292,6 +307,14 @@ def create_test_run(request: Request, payload: RunCreateRequest, db: Session = D
     return json_envelope(request, {"run": test_run_to_dict(run)}, status_code=201)
 
 
+@router.post("/test-runs/async")
+def create_test_run_async(request: Request, payload: RunCreateRequest, background_tasks: BackgroundTasks, db: Session = Depends(get_db)):
+    run = test_run_service.create_queued(db, payload)
+    db.commit()
+    background_tasks.add_task(_execute_run_in_background, run.id, payload)
+    return json_envelope(request, {"run": test_run_to_dict(run), "monitorUrl": f"/runs/{run.id}"}, status_code=202)
+
+
 @router.get("/smoke-suite/p0")
 def get_p0_smoke_suite(request: Request, db: Session = Depends(get_db)):
     suite = smoke_suite_service.ensure_p0_suite(db)
@@ -304,6 +327,41 @@ def run_p0_smoke_suite(request: Request, payload: SmokeSuiteRunRequest, db: Sess
     run, suite = smoke_suite_service.create_p0_run(db, payload, test_run_service)
     db.commit()
     return json_envelope(request, {"suite": suite, "run": test_run_to_dict(run)}, status_code=201)
+
+
+@router.post("/smoke-suite/p0/run-async")
+def run_p0_smoke_suite_async(request: Request, payload: SmokeSuiteRunRequest, background_tasks: BackgroundTasks, db: Session = Depends(get_db)):
+    cases = smoke_suite_service.ensure_p0_cases(db)
+    suite = smoke_suite_service.serialize_p0_suite(cases)
+    if suite["pixelFallbackCount"] > 0 and payload.riskAccepted is not True:
+        raise AppException(
+            42201,
+            "riskAccepted=true is required before running a suite with Pixel Fallback audit cases",
+            422,
+            details={
+                "suiteId": "p0_smoke",
+                "requiresRiskAcceptance": True,
+                "pixelFallbackCount": suite["pixelFallbackCount"],
+                "acceptanceNotes": suite["acceptanceNotes"],
+            },
+        )
+    config = dict(payload.config or {})
+    config.update(
+        {
+            "suiteId": suite["suite"]["id"],
+            "suiteName": suite["suite"]["name"],
+            "suiteTag": suite["suite"].get("tag"),
+            "riskAccepted": payload.riskAccepted,
+            "requiresRiskAcceptance": suite["requiresRiskAcceptance"],
+            "acceptanceNotes": suite["acceptanceNotes"],
+            "executionMode": "async",
+        }
+    )
+    run_request = RunCreateRequest(deviceId=payload.deviceId, caseIds=suite["caseIds"], config=config)
+    run = test_run_service.create_queued(db, run_request)
+    db.commit()
+    background_tasks.add_task(_execute_run_in_background, run.id, run_request)
+    return json_envelope(request, {"suite": suite, "run": test_run_to_dict(run), "monitorUrl": f"/runs/{run.id}"}, status_code=202)
 
 
 @router.get("/test-runs/{run_id}")
@@ -325,6 +383,34 @@ def cancel_test_run(request: Request, run_id: int, payload: RunCancelRequest, db
 def get_test_run_artifacts(request: Request, run_id: int, type: str | None = None, db: Session = Depends(get_db)):
     artifacts = test_run_service.artifacts_for_run(db, run_id, type_=type)
     return json_envelope(request, {"artifacts": [artifact_to_dict(artifact) for artifact in artifacts]})
+
+
+@router.get("/artifacts")
+def list_artifacts(
+    request: Request,
+    type: str | None = None,
+    runId: int | None = None,
+    deviceId: int | None = None,
+    limit: int = Query(default=100, ge=1, le=500),
+    db: Session = Depends(get_db),
+):
+    query = select(Artifact).order_by(Artifact.created_at.desc()).limit(limit)
+    if type:
+        query = query.where(Artifact.type == type)
+    if runId:
+        query = query.where(Artifact.run_id == runId)
+    if deviceId:
+        query = query.where(Artifact.device_id == deviceId)
+    artifacts = list(db.scalars(query).all())
+    return json_envelope(request, {"artifacts": [artifact_to_dict(artifact) for artifact in artifacts]})
+
+
+@router.get("/artifacts/{artifact_id}")
+def get_artifact(request: Request, artifact_id: int, db: Session = Depends(get_db)):
+    artifact = db.get(Artifact, artifact_id)
+    if not artifact:
+        raise AppException(NOT_FOUND, "artifact not found", 404)
+    return json_envelope(request, {"artifact": artifact_to_dict(artifact)})
 
 
 @router.get("/artifacts/{artifact_id}/download")

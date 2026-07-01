@@ -20,7 +20,7 @@ export type Orientation = 'portrait' | 'landscape';
 export type DeviceStatus = 'online' | 'offline' | 'unauthorized' | 'missing';
 export type RunStatus = 'queued' | 'running' | 'passed' | 'failed' | 'canceled';
 export type FlowStepStatus = 'queued' | 'running' | 'success' | 'failed' | 'skipped';
-export type ArtifactType = 'screenshot' | 'logcat' | 'ui_xml' | 'report' | 'report_json' | 'report_html' | 'pixel_audit';
+export type ArtifactType = 'screenshot' | 'logcat' | 'hierarchy' | 'ui_xml' | 'report' | 'report_json' | 'report_html' | 'pixel_audit';
 
 export interface ApiEnvelope<T> {
   code: number;
@@ -161,6 +161,7 @@ export interface FlowDefinitionStep {
   name: string;
   action: Action;
   params?: Record<string, string | number | boolean | string[]>;
+  timeoutSec?: number;
   description?: string;
 }
 
@@ -208,6 +209,15 @@ export interface TestRun {
   config?: Record<string, unknown>;
 }
 
+export interface ResultStepDetail {
+  index: number;
+  action: Action;
+  commandId?: EntityId;
+  status: string;
+  artifactIds?: EntityId[];
+  pixelAudit?: PixelAudit;
+}
+
 export interface TestResult {
   id: EntityId;
   runId: EntityId;
@@ -222,6 +232,10 @@ export interface TestResult {
   startedAt: string;
   endedAt?: string;
   pixelAudit?: PixelAudit;
+  raw?: {
+    steps?: ResultStepDetail[];
+    failure?: Record<string, unknown>;
+  };
 }
 
 export interface Artifact {

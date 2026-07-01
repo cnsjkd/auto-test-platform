@@ -19,6 +19,7 @@ import type {
 } from './types';
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL ?? '';
+const ALLOW_MOCK_FALLBACK = import.meta.env.VITE_ENABLE_MOCK_FALLBACK === 'true';
 
 class ApiError extends Error {
   constructor(public code: number, message: string, public status?: number, public details?: unknown) {
@@ -30,6 +31,7 @@ class ApiError extends Error {
 interface RequestOptions {
   fallbackOnHttpError?: boolean;
   fallbackOnStatuses?: number[];
+  allowMockFallback?: boolean;
 }
 
 const requestId = () => `frontend-${Date.now()}-${Math.random().toString(16).slice(2)}`;
@@ -53,7 +55,7 @@ async function parseJsonResponse(response: Response) {
 }
 
 async function request<T>(path: string, init?: RequestInit, fallback?: () => T | Promise<T>, options: RequestOptions = {}): Promise<ApiEnvelope<T>> {
-  const { fallbackOnHttpError = true, fallbackOnStatuses } = options;
+  const { fallbackOnHttpError = true, fallbackOnStatuses, allowMockFallback = ALLOW_MOCK_FALLBACK } = options;
 
   try {
     const response = await fetch(`${API_BASE}${path}`, {
@@ -74,7 +76,7 @@ async function request<T>(path: string, init?: RequestInit, fallback?: () => T |
     return envelope(body as T);
   } catch (error) {
     const shouldFallbackForStatus = error instanceof ApiError && error.status !== undefined && fallbackOnStatuses?.includes(error.status);
-    if (!fallback || (error instanceof ApiError && (!fallbackOnHttpError || (fallbackOnStatuses !== undefined && !shouldFallbackForStatus)))) {
+    if (!fallback || !allowMockFallback || (error instanceof ApiError && (!fallbackOnHttpError || (fallbackOnStatuses !== undefined && !shouldFallbackForStatus)))) {
       throw error;
     }
     await delay();
@@ -184,7 +186,8 @@ export const api = {
       },
     };
   }),
-  createRun: (payload: RunCreateRequest) => request<{ run: TestRun }>('/api/test-runs', { method: 'POST', body: JSON.stringify(payload) }, () => ({ run: { ...mockRuns[0], id: `run-local-${Date.now()}`, status: 'running', deviceId: payload.deviceId, totalCount: payload.caseIds.length, passedCount: 0, failedCount: 0, skippedCount: 0, startedAt: new Date().toLocaleString() } })),
+  createRun: (payload: RunCreateRequest) => request<{ run: TestRun; monitorUrl?: string }>('/api/test-runs/async', { method: 'POST', body: JSON.stringify(payload) }, () => ({ run: { ...mockRuns[0], id: `run-local-${Date.now()}`, status: 'queued', deviceId: payload.deviceId, totalCount: payload.caseIds.length, passedCount: 0, failedCount: 0, skippedCount: 0, startedAt: new Date().toLocaleString() }, monitorUrl: `/runs/run-local-${Date.now()}` })),
+  cancelRun: (id: EntityId, reason = '用户从监控页取消运行') => request<{ run: TestRun }>(`/api/test-runs/${toEntityPath(id)}/cancel`, { method: 'POST', body: JSON.stringify({ reason }) }, () => ({ run: { ...mockRuns[0], id, status: 'canceled', endedAt: new Date().toLocaleString() } })),
   runFlow: (payload: FlowRunRequest) => request<FlowRunResponse>(
     '/api/automation-flows/run',
     { method: 'POST', body: JSON.stringify(payload) },
@@ -192,7 +195,7 @@ export const api = {
     { fallbackOnStatuses: [404, 405, 500, 501, 502, 503, 504] },
   ),
   runP0SmokeSuite: (payload: SmokeSuiteRunRequest) => request<SmokeSuiteRunResponse>(
-    '/api/smoke-suite/p0/run',
+    '/api/smoke-suite/p0/run-async',
     { method: 'POST', body: JSON.stringify(payload) },
     () => {
       if (mockSmokeSuite.requiresRiskAcceptance && payload.riskAccepted !== true) {
@@ -224,7 +227,8 @@ export const api = {
   listRuns: () => request<{ runs: TestRun[] }>('/api/test-runs', undefined, () => ({ runs: mockRuns })),
   getRun: (id: EntityId) => request<RunDetail>(`/api/test-runs/${toEntityPath(id)}`, undefined, () => ({ ...mockRunDetail, run: { ...mockRunDetail.run, id } })),
   listRunArtifacts: (runId: EntityId) => request<{ artifacts: Artifact[] }>(`/api/test-runs/${toEntityPath(runId)}/artifacts`, undefined, () => ({ artifacts: mockArtifacts })),
-  getArtifact: (id: EntityId) => request<{ artifact: Artifact }>(`/api/artifacts/${toEntityPath(id)}/download`, undefined, () => ({ artifact: mockArtifacts.find((item) => String(item.id) === String(id)) ?? mockArtifacts[0] })),
+  listArtifacts: () => request<{ artifacts: Artifact[] }>('/api/artifacts', undefined, () => ({ artifacts: mockArtifacts })),
+  getArtifact: (id: EntityId) => request<{ artifact: Artifact }>(`/api/artifacts/${toEntityPath(id)}`, undefined, () => ({ artifact: mockArtifacts.find((item) => String(item.id) === String(id)) ?? mockArtifacts[0] })),
 };
 
 export { ApiError };

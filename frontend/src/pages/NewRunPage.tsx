@@ -84,7 +84,7 @@ export function NewRunPage() {
         riskAccepted: suiteRiskAccepted,
         config: { trigger: 'ui' },
       });
-      message.success(result.degraded ? '已启动本地 P0 冒烟预览运行' : '已提交 A2 P0 冒烟套件运行');
+      message.success(result.degraded ? '已启动本地 P0 冒烟预览运行' : '已提交 A2 P0 冒烟套件后台运行，正在进入监控页');
       navigate(`/runs/${result.data.run.id}`);
     } catch (error) {
       const content = error instanceof ApiError && (error.status === 422 || error.code === 42201)
@@ -106,7 +106,7 @@ export function NewRunPage() {
           <h1 className="page-title">创建 A2 真机运行</h1>
           <p className="page-description">选择已授权 A2 设备与 P0 用例。若包含像素坐标兜底，启动前必须显式确认风险。</p>
         </div>
-        <Button type="primary" loading={submitting} icon={<PlayCircle size={16} />} onClick={startRun}>启动运行</Button>
+        <Button type="primary" loading={submitting} icon={<PlayCircle size={16} />} onClick={startRun}>运行所选用例并监控</Button>
       </div>
 
       {degraded ? (
@@ -202,7 +202,7 @@ export function NewRunPage() {
               icon={<PlayCircle size={16} />}
               onClick={startSmokeSuite}
             >
-              一键运行 P0 冒烟套件
+              一键运行 P0 冒烟套件并监控
             </Button>
             <span style={{ color: 'var(--text-muted)', fontSize: 12, lineHeight: 1.6 }}>
               前端仅提交 deviceId、riskAccepted 与 config；riskAccepted 校验由后端 /api/smoke-suite/p0/run 执行。

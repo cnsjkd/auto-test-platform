@@ -83,6 +83,77 @@ class TestRunService:
         db.flush()
         return run
 
+    def create_queued(self, db: Session, request: RunCreateRequest) -> TestRun:
+        if request.deviceId is None:
+            raise AppException(RUN_NOT_EXECUTABLE, "deviceId is required for P0 execution", 422)
+        if not request.caseIds:
+            raise AppException(RUN_NOT_EXECUTABLE, "at least one test case is required", 422)
+        cases = self._resolve_cases(db, request.caseIds)
+        run = TestRun(
+            status="queued",
+            device_id=request.deviceId,
+            total_count=len(cases),
+            config=request.config,
+        )
+        db.add(run)
+        db.flush()
+        record_event(db, run_id=run.id, device_id=run.device_id, category="run_queued", message="test run queued")
+        return run
+
+    def execute_queued(self, db: Session, run_id: int, request: RunCreateRequest) -> TestRun:
+        run = self.get_run(db, run_id)
+        if request.deviceId is None:
+            raise AppException(RUN_NOT_EXECUTABLE, "deviceId is required for P0 execution", 422)
+        if not request.caseIds:
+            raise AppException(RUN_NOT_EXECUTABLE, "at least one test case is required", 422)
+        cases = self._resolve_cases(db, request.caseIds)
+        if run.status not in {"queued", "running"}:
+            raise AppException(RUN_NOT_EXECUTABLE, "test run is already finished", 422)
+        run.status = "running"
+        run.device_id = request.deviceId
+        run.total_count = len(cases)
+        run.passed_count = 0
+        run.failed_count = 0
+        run.skipped_count = 0
+        run.started_at = now_utc()
+        run.ended_at = None
+        run.config = request.config
+        db.flush()
+        record_event(db, run_id=run.id, device_id=run.device_id, category="run_started", message="test run started")
+        db.commit()
+        for case in cases:
+            db.refresh(run)
+            if run.status == "canceled":
+                run.skipped_count += 1
+                db.flush()
+                db.commit()
+                continue
+            result = self._execute_case(db, run, case)
+            if result.status == "passed":
+                run.passed_count += 1
+            elif result.status == "failed":
+                run.failed_count += 1
+            else:
+                run.skipped_count += 1
+            db.flush()
+            db.commit()
+        db.refresh(run)
+        if run.status != "canceled":
+            run.status = "failed" if run.failed_count else "passed"
+        run.ended_at = now_utc()
+        self._generate_reports(db, run)
+        record_event(
+            db,
+            run_id=run.id,
+            device_id=run.device_id,
+            category="run_finished",
+            message=f"test run finished with status {run.status}",
+            payload=serialize_test_run(run),
+        )
+        db.flush()
+        db.commit()
+        return run
+
     def cancel(self, db: Session, run_id: int, reason: str) -> TestRun:
         run = self.get_run(db, run_id)
         if run.status in {"passed", "failed", "canceled"}:

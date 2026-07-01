@@ -40,6 +40,39 @@ def test_health_does_not_crash_when_adb_missing_or_unavailable(client):
     assert Path(payload["data"]["artifactRoot"]).exists()
 
 
+def test_artifacts_list_and_metadata_endpoint_return_real_database_artifacts(client, tmp_path):
+    from app.db.session import SessionLocal
+    from app.models import Artifact
+
+    artifact_path = tmp_path / "real.png"
+    artifact_path.write_bytes(b"\x89PNG\r\n\x1a\nreal")
+    with SessionLocal() as db:
+        artifact = Artifact(
+            type="screenshot",
+            path=str(artifact_path),
+            mime_type="image/png",
+            size_bytes=artifact_path.stat().st_size,
+            checksum="sha256:real",
+            meta={"title": "真实截图"},
+        )
+        db.add(artifact)
+        db.commit()
+        artifact_id = artifact.id
+
+    list_response = client.get("/api/artifacts")
+    assert list_response.status_code == 200
+    artifacts = list_response.json()["data"]["artifacts"]
+    assert any(item["id"] == artifact_id and item["type"] == "screenshot" for item in artifacts)
+
+    meta_response = client.get(f"/api/artifacts/{artifact_id}")
+    assert meta_response.status_code == 200
+    assert meta_response.json()["data"]["artifact"]["id"] == artifact_id
+
+    download_response = client.get(f"/api/artifacts/{artifact_id}/download")
+    assert download_response.status_code == 200
+    assert download_response.content.startswith(b"\x89PNG")
+
+
 def test_pixel_fallback_missing_audit_fields_returns_52003(client):
     response = client.post(
         "/api/test-cases",
