@@ -1,0 +1,50 @@
+{
+  "baseUrl": "http://127.0.0.1:8010",
+  "deviceSerial": "A2PBVT1CFADBC000784",
+  "deviceModel": "AINOTE-A2",
+  "screen": "1200x1920",
+  "flowStatusCode": 200,
+  "envelopeCode": 0,
+  "runStatus": "success",
+  "runId": "flow_b5707088af00452e999142bebceb7f66",
+  "stepCount": 5,
+  "stepStatuses": [
+    "success",
+    "success",
+    "success",
+    "success",
+    "success"
+  ],
+  "stepActions": [
+    "keyevent",
+    "open_notification",
+    "open_quick_settings",
+    "keyevent",
+    "keyevent"
+  ],
+  "artifactCount": 8,
+  "artifactTypes": [
+    "screenshot",
+    "screenshot",
+    "screenshot",
+    "screenshot",
+    "screenshot",
+    "hierarchy",
+    "logcat",
+    "report_json"
+  ],
+  "screenshotArtifacts": [
+    "D:\\WorkBuddyData\\2026-06-30-11-43-37\\backend\\artifacts\\2026-07-01\\manual\\screenshot\\flow_b5707088af00452e999142bebceb7f66_step_1_after.png",
+    "D:\\WorkBuddyData\\2026-06-30-11-43-37\\backend\\artifacts\\2026-07-01\\manual\\screenshot\\flow_b5707088af00452e999142bebceb7f66_step_2_after.png",
+    "D:\\WorkBuddyData\\2026-06-30-11-43-37\\backend\\artifacts\\2026-07-01\\manual\\screenshot\\flow_b5707088af00452e999142bebceb7f66_step_3_after.png",
+    "D:\\WorkBuddyData\\2026-06-30-11-43-37\\backend\\artifacts\\2026-07-01\\manual\\screenshot\\flow_b5707088af00452e999142bebceb7f66_step_4_after.png",
+    "D:\\WorkBuddyData\\2026-06-30-11-43-37\\backend\\artifacts\\2026-07-01\\manual\\screenshot\\flow_b5707088af00452e999142bebceb7f66_step_5_after.png"
+  ],
+  "hierarchyArtifacts": [],
+  "logcatArtifacts": [
+    "D:\\WorkBuddyData\\2026-06-30-11-43-37\\backend\\artifacts\\2026-07-01\\manual\\logcat\\flow_b5707088af00452e999142bebceb7f66_final_logcat.txt"
+  ],
+  "reportArtifacts": [
+    "D:\\WorkBuddyData\\2026-06-30-11-43-37\\backend\\artifacts\\2026-07-01\\manual\\report_json\\flow_b5707088af00452e999142bebceb7f66_summary.json"
+  ]
+}

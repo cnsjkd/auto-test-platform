@@ -1,0 +1,164 @@
+{
+  "summary": {
+    "baseUrl": "http://127.0.0.1:8010",
+    "deviceSerial": "A2PBVT1CFADBC000784",
+    "deviceModel": "AINOTE-A2",
+    "screen": "1200x1920",
+    "flowStatusCode": 200,
+    "envelopeCode": 0,
+    "runStatus": "success",
+    "runId": "flow_b5707088af00452e999142bebceb7f66",
+    "stepCount": 5,
+    "stepStatuses": [
+      "success",
+      "success",
+      "success",
+      "success",
+      "success"
+    ],
+    "stepActions": [
+      "keyevent",
+      "open_notification",
+      "open_quick_settings",
+      "keyevent",
+      "keyevent"
+    ],
+    "artifactCount": 8,
+    "artifactTypes": [
+      "screenshot",
+      "screenshot",
+      "screenshot",
+      "screenshot",
+      "screenshot",
+      "hierarchy",
+      "logcat",
+      "report_json"
+    ],
+    "screenshotArtifacts": [
+      "D:\\WorkBuddyData\\2026-06-30-11-43-37\\backend\\artifacts\\2026-07-01\\manual\\screenshot\\flow_b5707088af00452e999142bebceb7f66_step_1_after.png",
+      "D:\\WorkBuddyData\\2026-06-30-11-43-37\\backend\\artifacts\\2026-07-01\\manual\\screenshot\\flow_b5707088af00452e999142bebceb7f66_step_2_after.png",
+      "D:\\WorkBuddyData\\2026-06-30-11-43-37\\backend\\artifacts\\2026-07-01\\manual\\screenshot\\flow_b5707088af00452e999142bebceb7f66_step_3_after.png",
+      "D:\\WorkBuddyData\\2026-06-30-11-43-37\\backend\\artifacts\\2026-07-01\\manual\\screenshot\\flow_b5707088af00452e999142bebceb7f66_step_4_after.png",
+      "D:\\WorkBuddyData\\2026-06-30-11-43-37\\backend\\artifacts\\2026-07-01\\manual\\screenshot\\flow_b5707088af00452e999142bebceb7f66_step_5_after.png"
+    ],
+    "hierarchyArtifacts": [],
+    "logcatArtifacts": [
+      "D:\\WorkBuddyData\\2026-06-30-11-43-37\\backend\\artifacts\\2026-07-01\\manual\\logcat\\flow_b5707088af00452e999142bebceb7f66_final_logcat.txt"
+    ],
+    "reportArtifacts": [
+      "D:\\WorkBuddyData\\2026-06-30-11-43-37\\backend\\artifacts\\2026-07-01\\manual\\report_json\\flow_b5707088af00452e999142bebceb7f66_summary.json"
+    ]
+  },
+  "fileChecks": [
+    {
+      "id": 36,
+      "type": "screenshot",
+      "path": "D:\\WorkBuddyData\\2026-06-30-11-43-37\\backend\\artifacts\\2026-07-01\\manual\\screenshot\\flow_b5707088af00452e999142bebceb7f66_step_1_after.png",
+      "exists": true,
+      "sizeBytes": 296876,
+      "sha256": "379cef47f182a708be77fedf1d0cf003a09782ee10b764378c885d7b75130664",
+      "pngSignatureOk": true,
+      "pngWidth": 1200,
+      "pngHeight": 1920
+    },
+    {
+      "id": 37,
+      "type": "screenshot",
+      "path": "D:\\WorkBuddyData\\2026-06-30-11-43-37\\backend\\artifacts\\2026-07-01\\manual\\screenshot\\flow_b5707088af00452e999142bebceb7f66_step_2_after.png",
+      "exists": true,
+      "sizeBytes": 296876,
+      "sha256": "379cef47f182a708be77fedf1d0cf003a09782ee10b764378c885d7b75130664",
+      "pngSignatureOk": true,
+      "pngWidth": 1200,
+      "pngHeight": 1920
+    },
+    {
+      "id": 38,
+      "type": "screenshot",
+      "path": "D:\\WorkBuddyData\\2026-06-30-11-43-37\\backend\\artifacts\\2026-07-01\\manual\\screenshot\\flow_b5707088af00452e999142bebceb7f66_step_3_after.png",
+      "exists": true,
+      "sizeBytes": 296876,
+      "sha256": "379cef47f182a708be77fedf1d0cf003a09782ee10b764378c885d7b75130664",
+      "pngSignatureOk": true,
+      "pngWidth": 1200,
+      "pngHeight": 1920
+    },
+    {
+      "id": 39,
+      "type": "screenshot",
+      "path": "D:\\WorkBuddyData\\2026-06-30-11-43-37\\backend\\artifacts\\2026-07-01\\manual\\screenshot\\flow_b5707088af00452e999142bebceb7f66_step_4_after.png",
+      "exists": true,
+      "sizeBytes": 296876,
+      "sha256": "379cef47f182a708be77fedf1d0cf003a09782ee10b764378c885d7b75130664",
+      "pngSignatureOk": true,
+      "pngWidth": 1200,
+      "pngHeight": 1920
+    },
+    {
+      "id": 40,
+      "type": "screenshot",
+      "path": "D:\\WorkBuddyData\\2026-06-30-11-43-37\\backend\\artifacts\\2026-07-01\\manual\\screenshot\\flow_b5707088af00452e999142bebceb7f66_step_5_after.png",
+      "exists": true,
+      "sizeBytes": 296876,
+      "sha256": "379cef47f182a708be77fedf1d0cf003a09782ee10b764378c885d7b75130664",
+      "pngSignatureOk": true,
+      "pngWidth": 1200,
+      "pngHeight": 1920
+    },
+    {
+      "id": 41,
+      "type": "hierarchy",
+      "path": "D:\\WorkBuddyData\\2026-06-30-11-43-37\\backend\\artifacts\\2026-07-01\\manual\\hierarchy\\flow_b5707088af00452e999142bebceb7f66_final_hierarchy.xml",
+      "exists": true,
+      "sizeBytes": 23355,
+      "sha256": "b5ed50e29f44f8865f21174de9c4ed5afe99f4eaa8597b802ed5e9a78a8a3684"
+    },
+    {
+      "id": 42,
+      "type": "logcat",
+      "path": "D:\\WorkBuddyData\\2026-06-30-11-43-37\\backend\\artifacts\\2026-07-01\\manual\\logcat\\flow_b5707088af00452e999142bebceb7f66_final_logcat.txt",
+      "exists": true,
+      "sizeBytes": 3254063,
+      "sha256": "e1c5cdc8b3c1e10641d73e8befd728629c81484062c587410547c80689721e7c"
+    },
+    {
+      "id": 43,
+      "type": "report_json",
+      "path": "D:\\WorkBuddyData\\2026-06-30-11-43-37\\backend\\artifacts\\2026-07-01\\manual\\report_json\\flow_b5707088af00452e999142bebceb7f66_summary.json",
+      "exists": true,
+      "sizeBytes": 13288,
+      "sha256": "3af4c3822c92c8e8fc05c86af714f331113cc1b804d0d9663bd38138d5d2daf6"
+    }
+  ],
+  "negativeGates": {
+    "shell": {
+      "httpStatus": 400,
+      "code": 40001,
+      "message": "automation flow does not allow shell action",
+      "data": {
+        "details": {
+          "blockedAction": "shell",
+          "stepIndexes": [
+            1
+          ]
+        }
+      }
+    },
+    "pixelAuditMissing": {
+      "httpStatus": 400,
+      "code": 52003,
+      "message": "像素兜底审计字段缺失: pixelFallback, fallbackReason, riskNote, improvementSuggestion",
+      "data": {
+        "details": {
+          "missing": [
+            "pixelFallback",
+            "fallbackReason",
+            "riskNote",
+            "improvementSuggestion"
+          ]
+        }
+      }
+    }
+  },
+  "pass": true
+}

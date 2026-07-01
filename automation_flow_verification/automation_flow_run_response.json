@@ -1,0 +1,769 @@
+{
+  "baseUrl": "http://127.0.0.1:8010",
+  "healthStatus": 200,
+  "health": {
+    "code": 0,
+    "data": {
+      "status": "ok",
+      "adbAvailable": true,
+      "adb": {
+        "available": true,
+        "version": "Android Debug Bridge version 1.0.41\nVersion 37.0.0-14910828\nInstalled as C:\\Users\\PC\\AppData\\Local\\Android\\Sdk\\platform-tools\\adb.EXE\nRunning on Windows 10.0.26200",
+        "message": ""
+      },
+      "db": {
+        "ok": true,
+        "message": ""
+      },
+      "pythonVersion": "3.13.12",
+      "artifactRoot": "D:\\WorkBuddyData\\2026-06-30-11-43-37\\backend\\artifacts"
+    },
+    "message": "",
+    "requestId": "56cffd62-87ea-4711-9ecc-a039ccb14ed4"
+  },
+  "scanStatus": 200,
+  "device": {
+    "id": 1,
+    "serial": "A2PBVT1CFADBC000784",
+    "status": "online",
+    "manufacturer": "AISPEECH",
+    "model": "AINOTE-A2",
+    "androidVersion": "13",
+    "sdkInt": 33,
+    "screenWidth": 1200,
+    "screenHeight": 1920,
+    "density": 320,
+    "battery": 100,
+    "network": "Unknown",
+    "storage": "Unknown",
+    "adbStatus": "device",
+    "capabilities": {
+      "adb": {
+        "serial": "A2PBVT1CFADBC000784",
+        "adbState": "device",
+        "raw": "A2PBVT1CFADBC000784    device product:vext_k6789v1_64 model:AINOTE_A2 device:AINOTE-A2 transport_id:1",
+        "product": "vext_k6789v1_64",
+        "model": "AINOTE_A2",
+        "device": "AINOTE-A2",
+        "transport_id": "1"
+      },
+      "orientation": "portrait",
+      "battery": {
+        "available": "true",
+        "Current Battery Service state": "",
+        "AC powered": "false",
+        "USB powered": "true",
+        "Wireless powered": "false",
+        "Max charging current": "500000",
+        "Max charging voltage": "5000000",
+        "Charge counter": "4500000",
+        "status": "2",
+        "health": "2",
+        "present": "true",
+        "level": "100",
+        "scale": "100",
+        "voltage": "4340",
+        "temperature": "280",
+        "technology": "Li-ion"
+      },
+      "network": null,
+      "storage": null,
+      "wmSizeRaw": "Physical size: 1200x1920",
+      "adbAvailable": true
+    },
+    "lastSeenAt": "2026-07-01T05:02:13.280072+00:00",
+    "createdAt": "2026-07-01T03:40:14.419396",
+    "updatedAt": "2026-07-01T05:02:14.147665+00:00"
+  },
+  "flowStatus": 200,
+  "flow": {
+    "code": 0,
+    "data": {
+      "run": {
+        "id": "flow_b5707088af00452e999142bebceb7f66",
+        "status": "success",
+        "deviceId": 1,
+        "totalCount": 5,
+        "passedCount": 5,
+        "failedCount": 0,
+        "pixelFallbackCount": 0,
+        "startedAt": "2026-07-01T05:02:14.184858+00:00",
+        "endedAt": "2026-07-01T05:02:20.160023+00:00",
+        "message": "flow completed"
+      },
+      "steps": [
+        {
+          "index": 1,
+          "name": "回到桌面",
+          "action": "keyevent",
+          "status": "success",
+          "message": "ok",
+          "command": {
+            "id": 34,
+            "deviceId": 1,
+            "runId": null,
+            "resultId": null,
+            "caseId": null,
+            "action": "keyevent",
+            "source": "flow",
+            "params": {
+              "key": "HOME"
+            },
+            "response": {
+              "stdout": "",
+              "stderr": ""
+            },
+            "exitCode": 0,
+            "status": "success",
+            "locatorMode": "adb",
+            "selector": {},
+            "pixelFallbackUsed": false,
+            "locatorFallbackId": null,
+            "errorCode": null,
+            "errorMessage": null,
+            "startedAt": "2026-07-01T05:02:14.187957+00:00",
+            "endedAt": "2026-07-01T05:02:14.302242+00:00"
+          },
+          "locatorMode": "adb",
+          "pixelFallbackUsed": false,
+          "artifacts": [
+            {
+              "id": 36,
+              "runId": null,
+              "resultId": null,
+              "deviceId": 1,
+              "type": "screenshot",
+              "path": "D:\\WorkBuddyData\\2026-06-30-11-43-37\\backend\\artifacts\\2026-07-01\\manual\\screenshot\\flow_b5707088af00452e999142bebceb7f66_step_1_after.png",
+              "fileName": "flow_b5707088af00452e999142bebceb7f66_step_1_after.png",
+              "mimeType": "image/png",
+              "sizeBytes": 296876,
+              "checksum": "379cef47f182a708be77fedf1d0cf003a09782ee10b764378c885d7b75130664",
+              "meta": {
+                "serial": "A2PBVT1CFADBC000784"
+              },
+              "createdAt": "2026-07-01T05:02:14.796336+00:00"
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "name": "展开通知栏",
+          "action": "open_notification",
+          "status": "success",
+          "message": "ok",
+          "command": {
+            "id": 35,
+            "deviceId": 1,
+            "runId": null,
+            "resultId": null,
+            "caseId": null,
+            "action": "open_notification",
+            "source": "flow",
+            "params": {},
+            "response": {
+              "stdout": "",
+              "stderr": ""
+            },
+            "exitCode": 0,
+            "status": "success",
+            "locatorMode": "adb",
+            "selector": {},
+            "pixelFallbackUsed": false,
+            "locatorFallbackId": null,
+            "errorCode": null,
+            "errorMessage": null,
+            "startedAt": "2026-07-01T05:02:14.798165+00:00",
+            "endedAt": "2026-07-01T05:02:14.902028+00:00"
+          },
+          "locatorMode": "adb",
+          "pixelFallbackUsed": false,
+          "artifacts": [
+            {
+              "id": 37,
+              "runId": null,
+              "resultId": null,
+              "deviceId": 1,
+              "type": "screenshot",
+              "path": "D:\\WorkBuddyData\\2026-06-30-11-43-37\\backend\\artifacts\\2026-07-01\\manual\\screenshot\\flow_b5707088af00452e999142bebceb7f66_step_2_after.png",
+              "fileName": "flow_b5707088af00452e999142bebceb7f66_step_2_after.png",
+              "mimeType": "image/png",
+              "sizeBytes": 296876,
+              "checksum": "379cef47f182a708be77fedf1d0cf003a09782ee10b764378c885d7b75130664",
+              "meta": {
+                "serial": "A2PBVT1CFADBC000784"
+              },
+              "createdAt": "2026-07-01T05:02:15.392338+00:00"
+            }
+          ]
+        },
+        {
+          "index": 3,
+          "name": "展开快捷设置",
+          "action": "open_quick_settings",
+          "status": "success",
+          "message": "ok",
+          "command": {
+            "id": 36,
+            "deviceId": 1,
+            "runId": null,
+            "resultId": null,
+            "caseId": null,
+            "action": "open_quick_settings",
+            "source": "flow",
+            "params": {},
+            "response": {
+              "stdout": "",
+              "stderr": ""
+            },
+            "exitCode": 0,
+            "status": "success",
+            "locatorMode": "adb",
+            "selector": {},
+            "pixelFallbackUsed": false,
+            "locatorFallbackId": null,
+            "errorCode": null,
+            "errorMessage": null,
+            "startedAt": "2026-07-01T05:02:15.393543+00:00",
+            "endedAt": "2026-07-01T05:02:15.485529+00:00"
+          },
+          "locatorMode": "adb",
+          "pixelFallbackUsed": false,
+          "artifacts": [
+            {
+              "id": 38,
+              "runId": null,
+              "resultId": null,
+              "deviceId": 1,
+              "type": "screenshot",
+              "path": "D:\\WorkBuddyData\\2026-06-30-11-43-37\\backend\\artifacts\\2026-07-01\\manual\\screenshot\\flow_b5707088af00452e999142bebceb7f66_step_3_after.png",
+              "fileName": "flow_b5707088af00452e999142bebceb7f66_step_3_after.png",
+              "mimeType": "image/png",
+              "sizeBytes": 296876,
+              "checksum": "379cef47f182a708be77fedf1d0cf003a09782ee10b764378c885d7b75130664",
+              "meta": {
+                "serial": "A2PBVT1CFADBC000784"
+              },
+              "createdAt": "2026-07-01T05:02:15.963246+00:00"
+            }
+          ]
+        },
+        {
+          "index": 4,
+          "name": "返回一次",
+          "action": "keyevent",
+          "status": "success",
+          "message": "ok",
+          "command": {
+            "id": 37,
+            "deviceId": 1,
+            "runId": null,
+            "resultId": null,
+            "caseId": null,
+            "action": "keyevent",
+            "source": "flow",
+            "params": {
+              "key": "BACK"
+            },
+            "response": {
+              "stdout": "",
+              "stderr": ""
+            },
+            "exitCode": 0,
+            "status": "success",
+            "locatorMode": "adb",
+            "selector": {},
+            "pixelFallbackUsed": false,
+            "locatorFallbackId": null,
+            "errorCode": null,
+            "errorMessage": null,
+            "startedAt": "2026-07-01T05:02:15.964496+00:00",
+            "endedAt": "2026-07-01T05:02:16.104290+00:00"
+          },
+          "locatorMode": "adb",
+          "pixelFallbackUsed": false,
+          "artifacts": [
+            {
+              "id": 39,
+              "runId": null,
+              "resultId": null,
+              "deviceId": 1,
+              "type": "screenshot",
+              "path": "D:\\WorkBuddyData\\2026-06-30-11-43-37\\backend\\artifacts\\2026-07-01\\manual\\screenshot\\flow_b5707088af00452e999142bebceb7f66_step_4_after.png",
+              "fileName": "flow_b5707088af00452e999142bebceb7f66_step_4_after.png",
+              "mimeType": "image/png",
+              "sizeBytes": 296876,
+              "checksum": "379cef47f182a708be77fedf1d0cf003a09782ee10b764378c885d7b75130664",
+              "meta": {
+                "serial": "A2PBVT1CFADBC000784"
+              },
+              "createdAt": "2026-07-01T05:02:16.637693+00:00"
+            }
+          ]
+        },
+        {
+          "index": 5,
+          "name": "返回二次",
+          "action": "keyevent",
+          "status": "success",
+          "message": "ok",
+          "command": {
+            "id": 38,
+            "deviceId": 1,
+            "runId": null,
+            "resultId": null,
+            "caseId": null,
+            "action": "keyevent",
+            "source": "flow",
+            "params": {
+              "key": "BACK"
+            },
+            "response": {
+              "stdout": "",
+              "stderr": ""
+            },
+            "exitCode": 0,
+            "status": "success",
+            "locatorMode": "adb",
+            "selector": {},
+            "pixelFallbackUsed": false,
+            "locatorFallbackId": null,
+            "errorCode": null,
+            "errorMessage": null,
+            "startedAt": "2026-07-01T05:02:16.639067+00:00",
+            "endedAt": "2026-07-01T05:02:16.781820+00:00"
+          },
+          "locatorMode": "adb",
+          "pixelFallbackUsed": false,
+          "artifacts": [
+            {
+              "id": 40,
+              "runId": null,
+              "resultId": null,
+              "deviceId": 1,
+              "type": "screenshot",
+              "path": "D:\\WorkBuddyData\\2026-06-30-11-43-37\\backend\\artifacts\\2026-07-01\\manual\\screenshot\\flow_b5707088af00452e999142bebceb7f66_step_5_after.png",
+              "fileName": "flow_b5707088af00452e999142bebceb7f66_step_5_after.png",
+              "mimeType": "image/png",
+              "sizeBytes": 296876,
+              "checksum": "379cef47f182a708be77fedf1d0cf003a09782ee10b764378c885d7b75130664",
+              "meta": {
+                "serial": "A2PBVT1CFADBC000784"
+              },
+              "createdAt": "2026-07-01T05:02:17.270754+00:00"
+            }
+          ]
+        }
+      ],
+      "artifacts": [
+        {
+          "id": 36,
+          "runId": null,
+          "resultId": null,
+          "deviceId": 1,
+          "type": "screenshot",
+          "path": "D:\\WorkBuddyData\\2026-06-30-11-43-37\\backend\\artifacts\\2026-07-01\\manual\\screenshot\\flow_b5707088af00452e999142bebceb7f66_step_1_after.png",
+          "fileName": "flow_b5707088af00452e999142bebceb7f66_step_1_after.png",
+          "mimeType": "image/png",
+          "sizeBytes": 296876,
+          "checksum": "379cef47f182a708be77fedf1d0cf003a09782ee10b764378c885d7b75130664",
+          "meta": {
+            "serial": "A2PBVT1CFADBC000784"
+          },
+          "createdAt": "2026-07-01T05:02:14.796336+00:00"
+        },
+        {
+          "id": 37,
+          "runId": null,
+          "resultId": null,
+          "deviceId": 1,
+          "type": "screenshot",
+          "path": "D:\\WorkBuddyData\\2026-06-30-11-43-37\\backend\\artifacts\\2026-07-01\\manual\\screenshot\\flow_b5707088af00452e999142bebceb7f66_step_2_after.png",
+          "fileName": "flow_b5707088af00452e999142bebceb7f66_step_2_after.png",
+          "mimeType": "image/png",
+          "sizeBytes": 296876,
+          "checksum": "379cef47f182a708be77fedf1d0cf003a09782ee10b764378c885d7b75130664",
+          "meta": {
+            "serial": "A2PBVT1CFADBC000784"
+          },
+          "createdAt": "2026-07-01T05:02:15.392338+00:00"
+        },
+        {
+          "id": 38,
+          "runId": null,
+          "resultId": null,
+          "deviceId": 1,
+          "type": "screenshot",
+          "path": "D:\\WorkBuddyData\\2026-06-30-11-43-37\\backend\\artifacts\\2026-07-01\\manual\\screenshot\\flow_b5707088af00452e999142bebceb7f66_step_3_after.png",
+          "fileName": "flow_b5707088af00452e999142bebceb7f66_step_3_after.png",
+          "mimeType": "image/png",
+          "sizeBytes": 296876,
+          "checksum": "379cef47f182a708be77fedf1d0cf003a09782ee10b764378c885d7b75130664",
+          "meta": {
+            "serial": "A2PBVT1CFADBC000784"
+          },
+          "createdAt": "2026-07-01T05:02:15.963246+00:00"
+        },
+        {
+          "id": 39,
+          "runId": null,
+          "resultId": null,
+          "deviceId": 1,
+          "type": "screenshot",
+          "path": "D:\\WorkBuddyData\\2026-06-30-11-43-37\\backend\\artifacts\\2026-07-01\\manual\\screenshot\\flow_b5707088af00452e999142bebceb7f66_step_4_after.png",
+          "fileName": "flow_b5707088af00452e999142bebceb7f66_step_4_after.png",
+          "mimeType": "image/png",
+          "sizeBytes": 296876,
+          "checksum": "379cef47f182a708be77fedf1d0cf003a09782ee10b764378c885d7b75130664",
+          "meta": {
+            "serial": "A2PBVT1CFADBC000784"
+          },
+          "createdAt": "2026-07-01T05:02:16.637693+00:00"
+        },
+        {
+          "id": 40,
+          "runId": null,
+          "resultId": null,
+          "deviceId": 1,
+          "type": "screenshot",
+          "path": "D:\\WorkBuddyData\\2026-06-30-11-43-37\\backend\\artifacts\\2026-07-01\\manual\\screenshot\\flow_b5707088af00452e999142bebceb7f66_step_5_after.png",
+          "fileName": "flow_b5707088af00452e999142bebceb7f66_step_5_after.png",
+          "mimeType": "image/png",
+          "sizeBytes": 296876,
+          "checksum": "379cef47f182a708be77fedf1d0cf003a09782ee10b764378c885d7b75130664",
+          "meta": {
+            "serial": "A2PBVT1CFADBC000784"
+          },
+          "createdAt": "2026-07-01T05:02:17.270754+00:00"
+        },
+        {
+          "id": 41,
+          "runId": null,
+          "resultId": null,
+          "deviceId": 1,
+          "type": "hierarchy",
+          "path": "D:\\WorkBuddyData\\2026-06-30-11-43-37\\backend\\artifacts\\2026-07-01\\manual\\hierarchy\\flow_b5707088af00452e999142bebceb7f66_final_hierarchy.xml",
+          "fileName": "flow_b5707088af00452e999142bebceb7f66_final_hierarchy.xml",
+          "mimeType": "application/xml",
+          "sizeBytes": 23355,
+          "checksum": "b5ed50e29f44f8865f21174de9c4ed5afe99f4eaa8597b802ed5e9a78a8a3684",
+          "meta": {
+            "serial": "A2PBVT1CFADBC000784"
+          },
+          "createdAt": "2026-07-01T05:02:19.885924+00:00"
+        },
+        {
+          "id": 42,
+          "runId": null,
+          "resultId": null,
+          "deviceId": 1,
+          "type": "logcat",
+          "path": "D:\\WorkBuddyData\\2026-06-30-11-43-37\\backend\\artifacts\\2026-07-01\\manual\\logcat\\flow_b5707088af00452e999142bebceb7f66_final_logcat.txt",
+          "fileName": "flow_b5707088af00452e999142bebceb7f66_final_logcat.txt",
+          "mimeType": "text/plain",
+          "sizeBytes": 3254063,
+          "checksum": "e1c5cdc8b3c1e10641d73e8befd728629c81484062c587410547c80689721e7c",
+          "meta": {
+            "serial": "A2PBVT1CFADBC000784",
+            "durationSec": 3,
+            "buffers": []
+          },
+          "createdAt": "2026-07-01T05:02:20.158938+00:00"
+        },
+        {
+          "id": 43,
+          "runId": null,
+          "resultId": null,
+          "deviceId": 1,
+          "type": "report_json",
+          "path": "D:\\WorkBuddyData\\2026-06-30-11-43-37\\backend\\artifacts\\2026-07-01\\manual\\report_json\\flow_b5707088af00452e999142bebceb7f66_summary.json",
+          "fileName": "flow_b5707088af00452e999142bebceb7f66_summary.json",
+          "mimeType": "application/json",
+          "sizeBytes": 13288,
+          "checksum": "3af4c3822c92c8e8fc05c86af714f331113cc1b804d0d9663bd38138d5d2daf6",
+          "meta": {
+            "flowId": "flow_b5707088af00452e999142bebceb7f66",
+            "flowName": "A2 visible automation flow verification"
+          },
+          "createdAt": "2026-07-01T05:02:20.182824+00:00"
+        }
+      ],
+      "summary": {
+        "flowId": "flow_b5707088af00452e999142bebceb7f66",
+        "name": "A2 visible automation flow verification",
+        "deviceId": 1,
+        "status": "success",
+        "totalSteps": 5,
+        "completedSteps": 5,
+        "failedSteps": 0,
+        "startedAt": "2026-07-01T05:02:14.184858+00:00",
+        "endedAt": "2026-07-01T05:02:20.160023+00:00",
+        "message": "flow completed"
+      },
+      "stepResults": [
+        {
+          "index": 1,
+          "name": "回到桌面",
+          "action": "keyevent",
+          "status": "success",
+          "message": "ok",
+          "command": {
+            "id": 34,
+            "deviceId": 1,
+            "runId": null,
+            "resultId": null,
+            "caseId": null,
+            "action": "keyevent",
+            "source": "flow",
+            "params": {
+              "key": "HOME"
+            },
+            "response": {
+              "stdout": "",
+              "stderr": ""
+            },
+            "exitCode": 0,
+            "status": "success",
+            "locatorMode": "adb",
+            "selector": {},
+            "pixelFallbackUsed": false,
+            "locatorFallbackId": null,
+            "errorCode": null,
+            "errorMessage": null,
+            "startedAt": "2026-07-01T05:02:14.187957+00:00",
+            "endedAt": "2026-07-01T05:02:14.302242+00:00"
+          },
+          "locatorMode": "adb",
+          "pixelFallbackUsed": false,
+          "artifacts": [
+            {
+              "id": 36,
+              "runId": null,
+              "resultId": null,
+              "deviceId": 1,
+              "type": "screenshot",
+              "path": "D:\\WorkBuddyData\\2026-06-30-11-43-37\\backend\\artifacts\\2026-07-01\\manual\\screenshot\\flow_b5707088af00452e999142bebceb7f66_step_1_after.png",
+              "fileName": "flow_b5707088af00452e999142bebceb7f66_step_1_after.png",
+              "mimeType": "image/png",
+              "sizeBytes": 296876,
+              "checksum": "379cef47f182a708be77fedf1d0cf003a09782ee10b764378c885d7b75130664",
+              "meta": {
+                "serial": "A2PBVT1CFADBC000784"
+              },
+              "createdAt": "2026-07-01T05:02:14.796336+00:00"
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "name": "展开通知栏",
+          "action": "open_notification",
+          "status": "success",
+          "message": "ok",
+          "command": {
+            "id": 35,
+            "deviceId": 1,
+            "runId": null,
+            "resultId": null,
+            "caseId": null,
+            "action": "open_notification",
+            "source": "flow",
+            "params": {},
+            "response": {
+              "stdout": "",
+              "stderr": ""
+            },
+            "exitCode": 0,
+            "status": "success",
+            "locatorMode": "adb",
+            "selector": {},
+            "pixelFallbackUsed": false,
+            "locatorFallbackId": null,
+            "errorCode": null,
+            "errorMessage": null,
+            "startedAt": "2026-07-01T05:02:14.798165+00:00",
+            "endedAt": "2026-07-01T05:02:14.902028+00:00"
+          },
+          "locatorMode": "adb",
+          "pixelFallbackUsed": false,
+          "artifacts": [
+            {
+              "id": 37,
+              "runId": null,
+              "resultId": null,
+              "deviceId": 1,
+              "type": "screenshot",
+              "path": "D:\\WorkBuddyData\\2026-06-30-11-43-37\\backend\\artifacts\\2026-07-01\\manual\\screenshot\\flow_b5707088af00452e999142bebceb7f66_step_2_after.png",
+              "fileName": "flow_b5707088af00452e999142bebceb7f66_step_2_after.png",
+              "mimeType": "image/png",
+              "sizeBytes": 296876,
+              "checksum": "379cef47f182a708be77fedf1d0cf003a09782ee10b764378c885d7b75130664",
+              "meta": {
+                "serial": "A2PBVT1CFADBC000784"
+              },
+              "createdAt": "2026-07-01T05:02:15.392338+00:00"
+            }
+          ]
+        },
+        {
+          "index": 3,
+          "name": "展开快捷设置",
+          "action": "open_quick_settings",
+          "status": "success",
+          "message": "ok",
+          "command": {
+            "id": 36,
+            "deviceId": 1,
+            "runId": null,
+            "resultId": null,
+            "caseId": null,
+            "action": "open_quick_settings",
+            "source": "flow",
+            "params": {},
+            "response": {
+              "stdout": "",
+              "stderr": ""
+            },
+            "exitCode": 0,
+            "status": "success",
+            "locatorMode": "adb",
+            "selector": {},
+            "pixelFallbackUsed": false,
+            "locatorFallbackId": null,
+            "errorCode": null,
+            "errorMessage": null,
+            "startedAt": "2026-07-01T05:02:15.393543+00:00",
+            "endedAt": "2026-07-01T05:02:15.485529+00:00"
+          },
+          "locatorMode": "adb",
+          "pixelFallbackUsed": false,
+          "artifacts": [
+            {
+              "id": 38,
+              "runId": null,
+              "resultId": null,
+              "deviceId": 1,
+              "type": "screenshot",
+              "path": "D:\\WorkBuddyData\\2026-06-30-11-43-37\\backend\\artifacts\\2026-07-01\\manual\\screenshot\\flow_b5707088af00452e999142bebceb7f66_step_3_after.png",
+              "fileName": "flow_b5707088af00452e999142bebceb7f66_step_3_after.png",
+              "mimeType": "image/png",
+              "sizeBytes": 296876,
+              "checksum": "379cef47f182a708be77fedf1d0cf003a09782ee10b764378c885d7b75130664",
+              "meta": {
+                "serial": "A2PBVT1CFADBC000784"
+              },
+              "createdAt": "2026-07-01T05:02:15.963246+00:00"
+            }
+          ]
+        },
+        {
+          "index": 4,
+          "name": "返回一次",
+          "action": "keyevent",
+          "status": "success",
+          "message": "ok",
+          "command": {
+            "id": 37,
+            "deviceId": 1,
+            "runId": null,
+            "resultId": null,
+            "caseId": null,
+            "action": "keyevent",
+            "source": "flow",
+            "params": {
+              "key": "BACK"
+            },
+            "response": {
+              "stdout": "",
+              "stderr": ""
+            },
+            "exitCode": 0,
+            "status": "success",
+            "locatorMode": "adb",
+            "selector": {},
+            "pixelFallbackUsed": false,
+            "locatorFallbackId": null,
+            "errorCode": null,
+            "errorMessage": null,
+            "startedAt": "2026-07-01T05:02:15.964496+00:00",
+            "endedAt": "2026-07-01T05:02:16.104290+00:00"
+          },
+          "locatorMode": "adb",
+          "pixelFallbackUsed": false,
+          "artifacts": [
+            {
+              "id": 39,
+              "runId": null,
+              "resultId": null,
+              "deviceId": 1,
+              "type": "screenshot",
+              "path": "D:\\WorkBuddyData\\2026-06-30-11-43-37\\backend\\artifacts\\2026-07-01\\manual\\screenshot\\flow_b5707088af00452e999142bebceb7f66_step_4_after.png",
+              "fileName": "flow_b5707088af00452e999142bebceb7f66_step_4_after.png",
+              "mimeType": "image/png",
+              "sizeBytes": 296876,
+              "checksum": "379cef47f182a708be77fedf1d0cf003a09782ee10b764378c885d7b75130664",
+              "meta": {
+                "serial": "A2PBVT1CFADBC000784"
+              },
+              "createdAt": "2026-07-01T05:02:16.637693+00:00"
+            }
+          ]
+        },
+        {
+          "index": 5,
+          "name": "返回二次",
+          "action": "keyevent",
+          "status": "success",
+          "message": "ok",
+          "command": {
+            "id": 38,
+            "deviceId": 1,
+            "runId": null,
+            "resultId": null,
+            "caseId": null,
+            "action": "keyevent",
+            "source": "flow",
+            "params": {
+              "key": "BACK"
+            },
+            "response": {
+              "stdout": "",
+              "stderr": ""
+            },
+            "exitCode": 0,
+            "status": "success",
+            "locatorMode": "adb",
+            "selector": {},
+            "pixelFallbackUsed": false,
+            "locatorFallbackId": null,
+            "errorCode": null,
+            "errorMessage": null,
+            "startedAt": "2026-07-01T05:02:16.639067+00:00",
+            "endedAt": "2026-07-01T05:02:16.781820+00:00"
+          },
+          "locatorMode": "adb",
+          "pixelFallbackUsed": false,
+          "artifacts": [
+            {
+              "id": 40,
+              "runId": null,
+              "resultId": null,
+              "deviceId": 1,
+              "type": "screenshot",
+              "path": "D:\\WorkBuddyData\\2026-06-30-11-43-37\\backend\\artifacts\\2026-07-01\\manual\\screenshot\\flow_b5707088af00452e999142bebceb7f66_step_5_after.png",
+              "fileName": "flow_b5707088af00452e999142bebceb7f66_step_5_after.png",
+              "mimeType": "image/png",
+              "sizeBytes": 296876,
+              "checksum": "379cef47f182a708be77fedf1d0cf003a09782ee10b764378c885d7b75130664",
+              "meta": {
+                "serial": "A2PBVT1CFADBC000784"
+              },
+              "createdAt": "2026-07-01T05:02:17.270754+00:00"
+            }
+          ]
+        }
+      ]
+    },
+    "message": "",
+    "requestId": "1b94bdb3-bf82-4531-98e8-1f2fff45db8a"
+  }
+}

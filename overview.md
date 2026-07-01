@@ -5,12 +5,14 @@
 - **允许恢复正式交付，并允许将 P0 冒烟套件纳入 v0.1+ 交付**。
 - GitHub 已封版提交并推送：`237c634 Finalize v0.1 delivery baseline`。
 - 最新体验增强提交已推送：`e0ab107 Add visible device control console`。
+- 自动化流程编排提交已推送：后端 `abb1438c`，前端 `cce7f8f`。
 - 版本标签已推送：`v0.1.0-a2-p0-smoke`。
 - 验证对象：思必驰会议办公本 A2 Android 真机自动化测试平台 v0.1+。
 - 真实设备：`A2PBVT1CFADBC000784`，`AINOTE-A2`，Android 13，1200x1920，ADB online。
 - 最终真实 A2 质量报告：`qa_final_real_a2_regression/QUALITY_REPORT.md`。
 - P0 冒烟套件质量报告：`qa_p0_smoke_suite/QUALITY_REPORT.md`。
 - 可见真机操作台验证证据：`visible_console_verification/visible_console_verification.json` 与 `backend/artifacts/2026-07-01/manual/screenshot/visible_console_after_demo.png`。
+- 自动化流程编排验证证据：`automation_flow_verification/automation_flow_gate_result.json`、`automation_flow_verification/automation_flow_summary.json`、`automation_flow_verification/automation_flow_run_response.json`。
 
 ## 已完成
 
@@ -31,6 +33,11 @@
   - 新增 `.github/workflows/ci.yml`，包含后端 pytest/compileall 与前端 typecheck/build。
   - 将 Vite dev proxy 改为 `VITE_DEV_PROXY_TARGET` 可配置，避免固定 8000 端口残留旧后端导致 404。
   - 创建并推送 tag：`v0.1.0-a2-p0-smoke`。
+- 完成自动化流程编排 MVP：
+  - 后端新增正式 `POST /api/automation-flows/run`，保留 `/api/flows/run` 兼容别名，响应核心字段为 `{ run, steps, artifacts }`。
+  - 前端设备详情页新增“自动化流程编排”卡片，一键运行 `HOME -> 通知栏 -> 快捷设置 -> BACK -> BACK`。
+  - 网页 Artifact 预览已直接渲染真实 screenshot / pixel_audit 图片，不再只显示占位。
+  - 真实 A2 联调通过：5/5 steps success，生成 5 张 1200x1920 PNG、final logcat、summary JSON；shell action 拦截 400/40001，Pixel 审计缺失拦截 400/52003。
 
 ## 最终 QA / 工程门禁结果
 
@@ -40,7 +47,7 @@
 | P0 冒烟套件 | 100%（7/7 用例通过） |
 | P0 缺陷 | 0 |
 | P1 缺陷 | 0 |
-| 后端测试 | `20 passed` |
+| 后端测试 | `23 passed` |
 | 后端 compileall | 通过 |
 | 前端 TypeScript/build | 通过 |
 | GitHub CI | 已新增，等待远端 Actions 首次运行结果 |
