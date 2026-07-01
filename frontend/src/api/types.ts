@@ -19,6 +19,7 @@ export type EntityId = string | number;
 export type Orientation = 'portrait' | 'landscape';
 export type DeviceStatus = 'online' | 'offline' | 'unauthorized' | 'missing';
 export type RunStatus = 'queued' | 'running' | 'passed' | 'failed' | 'canceled';
+export type FlowStepStatus = 'queued' | 'running' | 'success' | 'failed' | 'skipped';
 export type ArtifactType = 'screenshot' | 'logcat' | 'ui_xml' | 'report' | 'report_json' | 'report_html' | 'pixel_audit';
 
 export interface ApiEnvelope<T> {
@@ -153,6 +154,42 @@ export interface SmokeSuiteRunRequest {
 export interface SmokeSuiteRunResponse {
   suite: SmokeSuite;
   run: TestRun;
+}
+
+export interface FlowDefinitionStep {
+  id: string;
+  name: string;
+  action: Action;
+  params?: Record<string, string | number | boolean | string[]>;
+  description?: string;
+}
+
+export interface FlowRunRequest {
+  deviceId: EntityId;
+  flowId: string;
+  name: string;
+  steps: FlowDefinitionStep[];
+  captureArtifacts?: boolean;
+}
+
+export interface FlowStepResult extends FlowDefinitionStep {
+  status: FlowStepStatus;
+  startedAt?: string;
+  endedAt?: string;
+  durationMs?: number;
+  message?: string;
+  command?: DeviceCommandResult;
+  artifacts: Artifact[];
+}
+
+export type AutomationFlowRun = Pick<TestRun, 'id' | 'status' | 'deviceId' | 'totalCount' | 'passedCount' | 'failedCount' | 'pixelFallbackCount' | 'startedAt' | 'endedAt'> & {
+  message?: string;
+};
+
+export interface FlowRunResponse {
+  run: TestRun | AutomationFlowRun;
+  steps: FlowStepResult[];
+  artifacts: Artifact[];
 }
 
 export interface TestRun {

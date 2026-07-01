@@ -3,7 +3,7 @@ import { Camera, FileCode2, Home, ListTree, PanelTopOpen, RotateCcw, Settings2, 
 import { ReactNode, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { api } from '../api/client';
-import type { Action, Artifact, Device, DeviceCommandResult } from '../api/types';
+import type { Action, Artifact, Device, DeviceCommandResult, FlowRunResponse, FlowStepResult } from '../api/types';
 import { ArtifactPreview } from '../components/ArtifactPreview';
 import { StatusBadge } from '../components/StatusBadge';
 
@@ -18,6 +18,21 @@ interface ActionHistoryItem {
   command?: DeviceCommandResult;
   artifactCount: number;
 }
+
+const safeFlowSteps = [
+  { id: 'home', name: '回到主页', action: 'keyevent' as const, params: { key: 'HOME' }, description: '发送 HOME 键，确保从稳定起点开始。' },
+  { id: 'notification', name: '展开通知栏', action: 'open_notification' as const, description: '打开系统通知栏，验证 ADB 可见动作链路。' },
+  { id: 'quick-settings', name: '展开快捷设置', action: 'open_quick_settings' as const, description: '展开快捷设置面板，验证连续系统动作。' },
+  { id: 'back-quick-settings', name: '返回关闭快捷设置', action: 'keyevent' as const, params: { key: 'BACK' }, description: '发送 BACK 键关闭当前面板。' },
+  { id: 'back-notification', name: '返回关闭通知栏', action: 'keyevent' as const, params: { key: 'BACK' }, description: '再次发送 BACK 键回到初始状态。' },
+];
+
+const statusColor = (status?: string) => {
+  if (status === 'success' || status === 'passed') return 'success';
+  if (status === 'failed') return 'error';
+  if (status === 'running') return 'processing';
+  return 'default';
+};
 
 const visibleActions: Array<{
   key: VisibleAction;
@@ -69,6 +84,10 @@ export function DeviceDetailPage() {
   const [artifacts, setArtifacts] = useState<Artifact[]>([]);
   const [history, setHistory] = useState<ActionHistoryItem[]>([]);
   const [loadingAction, setLoadingAction] = useState<string>();
+  const [flowRun, setFlowRun] = useState<FlowRunResponse>();
+  const [runningFlow, setRunningFlow] = useState(false);
+  const [flowError, setFlowError] = useState<string>();
+  const [flowDegraded, setFlowDegraded] = useState(false);
 
   useEffect(() => {
     void api.getDevice(id).then((result) => setDevice(result.data.device));
@@ -122,6 +141,44 @@ export function DeviceDetailPage() {
     appendArtifacts([result.data.artifact]);
     return result.data.artifact;
   };
+
+  const runFlow = async () => {
+    if (!device) return;
+    setRunningFlow(true);
+    setFlowError(undefined);
+    setFlowDegraded(false);
+    try {
+      const result = await api.runFlow({
+        deviceId: device.id,
+        flowId: 'a2-safe-system-panel-flow',
+        name: 'A2 安全系统面板流程',
+        steps: safeFlowSteps,
+        captureArtifacts: true,
+      });
+      setFlowRun(result.data);
+      appendArtifacts(result.data.artifacts);
+      setFlowDegraded(Boolean(result.degraded));
+      appendHistory({
+        label: 'message' in result.data.run && result.data.run.message ? result.data.run.message : 'A2 安全系统面板流程',
+        status: result.data.run.status === 'failed' ? 'failed' : 'success',
+        artifactCount: result.data.artifacts.length,
+      });
+      message.success(result.degraded ? '后端不可用，已展示本地流程预览' : '流程已执行完成');
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : '流程执行失败';
+      setFlowError(errorMessage);
+      appendHistory({ label: '流程编排运行失败', status: 'failed', artifactCount: 0 });
+      message.error(errorMessage);
+    } finally {
+      setRunningFlow(false);
+    }
+  };
+
+  const flowStepById = useMemo(() => {
+    const map = new Map<string, FlowStepResult>();
+    flowRun?.steps.forEach((step) => map.set(step.id, step));
+    return map;
+  }, [flowRun]);
 
   const runVisibleAction = async (action: VisibleAction) => {
     if (!device) return;
@@ -238,6 +295,64 @@ export function DeviceDetailPage() {
         </div>
 
         <div style={{ display: 'grid', gap: 18 }}>
+          <div className="console-card" style={{ padding: 16 }}>
+            <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 16 }}>
+              <div>
+                <h2 style={{ marginTop: 0 }}>流程编排运行</h2>
+                <p style={{ color: 'var(--text-secondary)', margin: '0 0 12px' }}>内置安全流程：HOME -&gt; 通知栏 -&gt; 快捷设置 -&gt; BACK -&gt; BACK。后端不可用时展示本地预览，参数校验错误会直接显示。</p>
+              </div>
+              <Button type="primary" loading={runningFlow} disabled={!device || device.status !== 'online'} icon={<Zap size={16} />} onClick={runFlow}>
+                执行流程
+              </Button>
+            </div>
+            <Space wrap style={{ marginBottom: 12 }}>
+              <Tag color={statusColor(flowRun?.run.status)}>{flowRun?.run.status ?? 'idle'}</Tag>
+              <Tag>artifact：{flowRun?.artifacts.length ?? 0} 个</Tag>
+              {flowRun?.run.id ? <Tag className="mono">{flowRun.run.id}</Tag> : null}
+            </Space>
+            {flowDegraded ? <Alert type="warning" showIcon message="后端流程 API 不可用，当前为本地 mock 预览" style={{ marginBottom: 12 }} /> : null}
+            {flowError ? <Alert type="error" showIcon message="流程执行失败" description={flowError} style={{ marginBottom: 12 }} /> : null}
+            <List
+              dataSource={safeFlowSteps}
+              renderItem={(step, index) => {
+                const result = flowStepById.get(step.id);
+                const screenshot = result?.artifacts.find((artifact) => artifact.type === 'screenshot');
+                return (
+                  <List.Item>
+                    <List.Item.Meta
+                      avatar={<Tag className="mono">{index + 1}</Tag>}
+                      title={(
+                        <Space wrap>
+                          <span>{step.name}</span>
+                          <Tag>{step.action === 'keyevent' ? `keyevent ${step.params?.key}` : step.action}</Tag>
+                          <Tag color={statusColor(result?.status)}>{result?.status ?? 'pending'}</Tag>
+                        </Space>
+                      )}
+                      description={(
+                        <div style={{ display: 'grid', gap: 8 }}>
+                          <span>{result?.message ?? step.description}</span>
+                          <span className="mono" style={{ color: 'var(--text-muted)', fontSize: 12 }}>
+                            artifact：{result?.artifacts.length ?? 0} 个{result?.durationMs ? ` · ${result.durationMs}ms` : ''}
+                          </span>
+                          {screenshot ? (
+                            <div style={{ width: 180, border: '1px solid var(--border-default)', borderRadius: 'var(--radius-card)', background: 'var(--bg-elevated)', color: 'var(--text-secondary)', padding: 10 }}>
+                              <img
+                                src={`/api/artifacts/${screenshot.id}/download`}
+                                alt={screenshot.meta?.title ?? screenshot.path}
+                                style={{ display: 'block', width: '100%', height: 96, objectFit: 'contain', borderRadius: 'var(--radius-button)' }}
+                              />
+                              <span style={{ display: 'block', marginTop: 6, textAlign: 'center' }}>{screenshot.meta?.title ?? screenshot.path}</span>
+                            </div>
+                          ) : null}
+                        </div>
+                      )}
+                    />
+                  </List.Item>
+                );
+              }}
+            />
+          </div>
+
           <div className="console-card" style={{ padding: 16 }}>
             <h2 style={{ marginTop: 0 }}>动作说明</h2>
             <List

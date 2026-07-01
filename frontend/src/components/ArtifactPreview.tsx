@@ -1,26 +1,38 @@
 import { Button, Empty } from 'antd';
-import { Download, Image as ImageIcon, LocateFixed } from 'lucide-react';
+import { Download, LocateFixed } from 'lucide-react';
 import { CodeBlock } from './CodeBlock';
 import { PixelRiskPanel } from './PixelRiskPanel';
 import type { Artifact } from '../api/types';
 
 export function ScreenshotViewer({ artifact }: { artifact: Artifact }) {
   const audit = artifact.meta?.pixelAudit;
+  const downloadUrl = `/api/artifacts/${artifact.id}/download`;
   return (
     <div className="console-card" style={{ padding: 16 }}>
       <div style={{ display: 'grid', gridTemplateColumns: audit ? '1fr 320px' : '1fr', gap: 16 }}>
-        <div style={{ minHeight: 420, border: '1px solid var(--border-default)', borderRadius: 'var(--radius-card)', background: 'var(--bg-elevated)', position: 'relative', overflow: 'hidden', display: 'grid', placeItems: 'center' }}>
-          <div style={{ textAlign: 'center', color: 'var(--text-secondary)' }}>
-            <ImageIcon size={42} />
-            <div style={{ marginTop: 10 }}>{artifact.meta?.title ?? artifact.path}</div>
-            <div className="mono" style={{ marginTop: 6, fontSize: 12 }}>{artifact.mimeType} · {artifact.sizeBytes} bytes</div>
+        <div style={{ display: 'grid', gap: 12 }}>
+          <div style={{ minHeight: 420, border: '1px solid var(--border-default)', borderRadius: 'var(--radius-card)', background: 'var(--bg-elevated)', position: 'relative', overflow: 'hidden', display: 'grid', placeItems: 'center' }}>
+            <img
+              src={downloadUrl}
+              alt={artifact.meta?.title ?? artifact.path}
+              style={{ display: 'block', width: '100%', height: '100%', maxHeight: 720, objectFit: 'contain' }}
+            />
+            {audit ? (
+              <div style={{ position: 'absolute', left: `${(audit.x / audit.screenWidth) * 100}%`, top: `${(audit.y / audit.screenHeight) * 100}%`, transform: 'translate(-50%, -50%)', color: 'var(--color-error)', display: 'grid', placeItems: 'center', pointerEvents: 'none' }}>
+                <LocateFixed size={34} />
+                <span className="mono" style={{ marginTop: 6, fontSize: 12 }}>x={audit.x}, y={audit.y}</span>
+              </div>
+            ) : null}
           </div>
-          {audit ? (
-            <div style={{ position: 'absolute', left: `${(audit.x / audit.screenWidth) * 100}%`, top: `${(audit.y / audit.screenHeight) * 100}%`, transform: 'translate(-50%, -50%)', color: 'var(--color-error)', display: 'grid', placeItems: 'center' }}>
-              <LocateFixed size={34} />
-              <span className="mono" style={{ marginTop: 6, fontSize: 12 }}>x={audit.x}, y={audit.y}</span>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, color: 'var(--text-secondary)' }}>
+            <div>
+              <div>{artifact.meta?.title ?? artifact.path}</div>
+              <div className="mono" style={{ marginTop: 4, fontSize: 12 }}>{artifact.mimeType} · {artifact.sizeBytes} bytes</div>
             </div>
-          ) : null}
+            <Button icon={<Download size={16} />} href={downloadUrl}>
+              下载截图
+            </Button>
+          </div>
         </div>
         {audit ? <PixelRiskPanel audit={audit} /> : null}
       </div>

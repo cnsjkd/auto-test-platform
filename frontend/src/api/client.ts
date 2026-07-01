@@ -6,6 +6,8 @@ import type {
   DeviceCommandRequest,
   DeviceCommandResult,
   EntityId,
+  FlowRunRequest,
+  FlowRunResponse,
   Health,
   RunCreateRequest,
   RunDetail,
@@ -27,6 +29,7 @@ class ApiError extends Error {
 
 interface RequestOptions {
   fallbackOnHttpError?: boolean;
+  fallbackOnStatuses?: number[];
 }
 
 const requestId = () => `frontend-${Date.now()}-${Math.random().toString(16).slice(2)}`;
@@ -50,7 +53,7 @@ async function parseJsonResponse(response: Response) {
 }
 
 async function request<T>(path: string, init?: RequestInit, fallback?: () => T | Promise<T>, options: RequestOptions = {}): Promise<ApiEnvelope<T>> {
-  const { fallbackOnHttpError = true } = options;
+  const { fallbackOnHttpError = true, fallbackOnStatuses } = options;
 
   try {
     const response = await fetch(`${API_BASE}${path}`, {
@@ -70,7 +73,8 @@ async function request<T>(path: string, init?: RequestInit, fallback?: () => T |
     }
     return envelope(body as T);
   } catch (error) {
-    if (!fallback || (error instanceof ApiError && !fallbackOnHttpError)) {
+    const shouldFallbackForStatus = error instanceof ApiError && error.status !== undefined && fallbackOnStatuses?.includes(error.status);
+    if (!fallback || (error instanceof ApiError && (!fallbackOnHttpError || (fallbackOnStatuses !== undefined && !shouldFallbackForStatus)))) {
       throw error;
     }
     await delay();
@@ -103,6 +107,53 @@ const ensurePixelAudit = (payload: DeviceCommandRequest) => {
 
 const toEntityPath = (id: EntityId) => String(id);
 
+const createMockFlowRun = (payload: FlowRunRequest): FlowRunResponse => {
+  const startedAt = new Date();
+  const runId = `flow-local-${startedAt.getTime()}`;
+  const steps = payload.steps.map((step, index) => {
+    const artifact: Artifact = {
+      ...mockArtifacts[0],
+      id: `artifact-flow-${startedAt.getTime()}-${index + 1}`,
+      runId,
+      deviceId: payload.deviceId,
+      path: `artifacts/${runId}/step-${index + 1}-${step.id}.png`,
+      createdAt: new Date(startedAt.getTime() + (index + 1) * 700).toLocaleString(),
+      meta: { title: `${step.name} 后截图` },
+    };
+
+    return {
+      ...step,
+      status: 'success' as const,
+      startedAt: new Date(startedAt.getTime() + index * 1000).toLocaleString(),
+      endedAt: new Date(startedAt.getTime() + (index + 1) * 1000).toLocaleString(),
+      durationMs: 420 + index * 80,
+      message: '本地预览流程步骤已模拟执行',
+      command: { action: step.action, status: 'success' as const, message: '本地预览命令已模拟执行' },
+      artifacts: payload.captureArtifacts === false ? [] : [artifact],
+    };
+  });
+  const artifacts = steps.flatMap((step) => step.artifacts);
+
+  return {
+    run: {
+      id: runId,
+      status: 'passed',
+      deviceId: payload.deviceId,
+      deviceSerial: String(payload.deviceId),
+      totalCount: steps.length,
+      passedCount: steps.length,
+      failedCount: 0,
+      skippedCount: 0,
+      startedAt: startedAt.toLocaleString(),
+      endedAt: new Date(startedAt.getTime() + steps.length * 1000).toLocaleString(),
+      pixelFallbackCount: 0,
+      message: payload.name,
+    },
+    steps,
+    artifacts,
+  };
+};
+
 export const api = {
   health: () => request<Health>('/api/health', undefined, () => mockHealth),
   listDevices: () => request<{ devices: Device[] }>('/api/devices', undefined, () => ({ devices: mockDevices })),
@@ -134,6 +185,12 @@ export const api = {
     };
   }),
   createRun: (payload: RunCreateRequest) => request<{ run: TestRun }>('/api/test-runs', { method: 'POST', body: JSON.stringify(payload) }, () => ({ run: { ...mockRuns[0], id: `run-local-${Date.now()}`, status: 'running', deviceId: payload.deviceId, totalCount: payload.caseIds.length, passedCount: 0, failedCount: 0, skippedCount: 0, startedAt: new Date().toLocaleString() } })),
+  runFlow: (payload: FlowRunRequest) => request<FlowRunResponse>(
+    '/api/automation-flows/run',
+    { method: 'POST', body: JSON.stringify(payload) },
+    () => createMockFlowRun(payload),
+    { fallbackOnStatuses: [404, 405, 500, 501, 502, 503, 504] },
+  ),
   runP0SmokeSuite: (payload: SmokeSuiteRunRequest) => request<SmokeSuiteRunResponse>(
     '/api/smoke-suite/p0/run',
     { method: 'POST', body: JSON.stringify(payload) },
