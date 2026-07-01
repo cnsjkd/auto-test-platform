@@ -1,0 +1,41 @@
+# Local secrets
+.env
+.env.*
+!.env.example
+
+# WorkBuddy/local state
+.workbuddy/
+
+# Python/test cache
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Local SQLite/runtime artifacts
+*.db
+backend/*.db
+backend/artifacts/
+backend/artifacts_*/
+**/artifacts/
+**/artifacts_*/
+
+# QA/manual runtime evidence
+manual_acceptance_visible/
+real_a2_p0_regression/
+qa_*_regression/
+qa_p0_smoke_suite/
+qa_independent_cp936_fix/
+qa_independent_*.py
+
+# Frontend dependencies/build output
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+
+# Logs and editor files
+*.log
+.vscode/
+.idea/
+.DS_Store
