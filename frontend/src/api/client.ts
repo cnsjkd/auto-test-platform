@@ -4,6 +4,7 @@ import type {
   Artifact,
   Device,
   DeviceCommandRequest,
+  DeviceCommandResult,
   EntityId,
   Health,
   RunCreateRequest,
@@ -109,10 +110,10 @@ export const api = {
   getDevice: (id: EntityId) => request<{ device: Device }>(`/api/devices/${toEntityPath(id)}`, undefined, () => ({ device: mockDevices.find((item) => String(item.id) === String(id)) ?? mockDevices[0] })),
   deviceCommand: (deviceId: EntityId, payload: DeviceCommandRequest) => {
     ensurePixelAudit(payload);
-    return request<{ command: DeviceCommandRequest; artifacts: Artifact[] }>(
+    return request<{ command: DeviceCommandResult; artifacts: Artifact[] }>(
       `/api/devices/${toEntityPath(deviceId)}/commands`,
       { method: 'POST', body: JSON.stringify(payload) },
-      () => ({ command: payload, artifacts: mockArtifacts.slice(0, 1) }),
+      () => ({ command: { action: payload.action, status: 'success', message: '本地预览命令已模拟执行' }, artifacts: mockArtifacts.slice(0, 1) }),
     );
   },
   screenshot: (deviceId: EntityId) => request<{ artifact: Artifact }>(`/api/devices/${toEntityPath(deviceId)}/screenshot`, { method: 'POST', body: JSON.stringify({ name: 'manual-screenshot' }) }, () => ({ artifact: mockArtifacts[0] })),

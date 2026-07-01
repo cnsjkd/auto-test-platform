@@ -28,6 +28,7 @@ qa_*_regression/
 qa_p0_smoke_suite/
 qa_independent_cp936_fix/
 qa_independent_*.py
+visible_console_verification/
 
 # Frontend dependencies/build output
 frontend/node_modules/

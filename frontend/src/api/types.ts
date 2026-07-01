@@ -226,3 +226,15 @@ export interface DeviceCommandRequest {
   screenHeight?: number;
   orientation?: Orientation;
 }
+
+export interface DeviceCommandResult {
+  id?: EntityId;
+  action: Action;
+  status?: 'success' | 'failed' | 'running' | 'queued';
+  startedAt?: string;
+  endedAt?: string;
+  durationMs?: number;
+  message?: string;
+  stdout?: string;
+  stderr?: string;
+}
